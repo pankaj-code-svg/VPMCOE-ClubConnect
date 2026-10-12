@@ -251,6 +251,7 @@ public class DataInitializer implements CommandLineRunner {
                 120,
                 "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80"
         );
+        hackathon.setVisibleToAll(true);
         eventRepository.save(hackathon);
 
         Event aarohan = new Event(
@@ -266,6 +267,7 @@ public class DataInitializer implements CommandLineRunner {
                 250,
                 "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=800&q=80"
         );
+        aarohan.setVisibleToAll(true);
         eventRepository.save(aarohan);
 
         Event cricket = new Event(
@@ -281,6 +283,7 @@ public class DataInitializer implements CommandLineRunner {
                 300,
                 "https://images.unsplash.com/photo-1531415074868-036b1c57e329?w=800&q=80"
         );
+        cricket.setVisibleToAll(true);
         eventRepository.save(cricket);
 
         Event aiBootcamp = new Event(
@@ -296,6 +299,7 @@ public class DataInitializer implements CommandLineRunner {
                 80,
                 "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80"
         );
+        aiBootcamp.setVisibleToAll(true);
         eventRepository.save(aiBootcamp);
 
         ClubMembership m1 = new ClubMembership(

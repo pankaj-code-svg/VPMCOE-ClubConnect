@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+
+<head>
+    <title>Sign In - VPM College of Engineering ClubConnect</title>
+</head>
+
+<body>
+
+<div id="content">
+
+    <div class="container py-4">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white login-card">
+
+                    <div class="login-header">
+
+                        <div class="login-brand">
+
+                            <img th:src="@{/images/college-logo.jpg}"
+                                 src="/images/college-logo.jpg"
+                                 alt="VPM College of Engineering Logo"
+                                 class="login-college-logo">
+
+                            <div class="brand-divider"></div>
+
+                            <div class="login-clubconnect">
+
+                                <i class="bi bi-mortarboard-fill"></i>
+
+                                <span>ClubConnect</span>
+
+                            </div>
+
+                        </div>
+
+                        <h2>Welcome Back</h2>
+
+                        <p>Sign in to your VPM ClubConnect account</p>
+
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+
+                        <form th:action="@{/login}" method="post">
+
+                            <div class="mb-4">
+
+                                <label for="username"
+                                       class="form-label fw-semibold text-dark">
+
+                                    College Email Address
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+
+                                        <i class="bi bi-envelope"></i>
+
+                                    </span>
+
+                                    <input type="email"
+                                           class="form-control border-start-0 ps-2"
+                                           id="username"
+                                           name="username"
+                                           placeholder="name@vpmcoethane.org"
+                                           required
+                                           autofocus>
+
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label for="password"
+                                       class="form-label fw-semibold text-dark">
+
+                                    Password
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text bg-light border-end-0 text-muted">
+
+                                        <i class="bi bi-shield-lock"></i>
+
+                                    </span>
+
+                                    <input type="password"
+                                           class="form-control border-start-0 ps-2"
+                                           id="password"
+                                           name="password"
+                                           placeholder="Enter your password"
+                                           required>
+
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow-sm mb-4">
+
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                                Sign In
+
+                            </button>
+
+                        </form>
+
+                        <div class="text-center text-muted">
+
+                            Don't have a student account?
+
+                            <a th:href="@{/register}"
+                               class="fw-bold text-primary text-decoration-none">
+
+                                Register as Student
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

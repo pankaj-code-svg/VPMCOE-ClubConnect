@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Event Entry Pass - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="text-center mb-3 no-print">
+                <a th:href="@{/student/dashboard}" class="btn btn-outline-secondary btn-sm rounded-pill mb-2">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <button type="button" class="btn btn-primary btn-sm rounded-pill mb-2 ms-2" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print / Download Pass
+                </button>
+            </div>
+
+            <div class="ticket-card shadow-lg">
+
+                <div class="ticket-header">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="badge bg-white text-primary px-2 py-1 fw-bold rounded-pill mb-1">
+                                <i class="bi bi-mortarboard-fill me-1"></i> VPMCOE CAMPUS PASS
+                            </span>
+                            <div class="small text-light text-opacity-75" th:text="${event.club.name}">Technology Club</div>
+                        </div>
+                        <span class="badge bg-warning text-dark fw-bold px-3 py-1-5 rounded-pill">CONFIRMED PASS</span>
+                    </div>
+                    <h3 class="fw-bold mb-0 text-white" th:text="${event.title}">HackVPM 2026: 24-Hour Annual Hackathon</h3>
+                </div>
+
+                <div class="ticket-divider"></div>
+
+                <div class="p-4 bg-white">
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="text-muted small">Attendee Name</div>
+                            <div class="fw-bold fs-6 text-dark" th:text="${student.fullName}">Rohan Kadam</div>
+                            <div class="small text-muted" th:text="${student.prn}">PRN2025IT034</div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <div class="text-muted small">Department</div>
+                            <div class="fw-semibold text-dark" th:text="${student.department}">Information Technology</div>
+                            <div class="small text-muted" th:text="${student.academicYear}">Second Year (SE)</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 p-3 bg-light rounded-3 mb-4 border">
+                        <div class="col-sm-6">
+                            <div class="text-muted small"><i class="bi bi-calendar3 me-1 text-primary"></i> Date & Time</div>
+                            <div class="fw-bold text-dark" th:text="${#temporals.format(event.eventDate, 'EEE, dd MMM yyyy - hh:mm a')}">Date</div>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <div class="text-muted small"><i class="bi bi-geo-alt me-1 text-danger"></i> Campus Venue</div>
+                            <div class="fw-bold text-dark" th:text="${event.venue}">Lab 304, IT Building</div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <div class="text-muted small mb-1">Scan this QR barcode for event attendance</div>
+                        <img th:src="@{/student/tickets/{regId}/qr(regId=${registration.id})}"
+                             class="img-fluid border rounded-3 p-2 bg-white"
+                             style="width: 190px; height: 190px; image-rendering: pixelated;"
+                             alt="Event entry pass QR barcode">
+                        <div class="ticket-barcode text-dark" th:text="${registration.ticketNumber}">
+                            VPM-1-HACK2026
+                        </div>
+                    </div>
+
+                    <div class="text-center text-muted" style="font-size: 0.75rem;">
+                        Please present this digital pass or a printed copy along with your VPMCOE Student Identity Card at the registration desk.
+                    </div>
+                </div>
+
+                <div class="bg-light p-3 border-top text-center small text-muted">
+                    Issued by VPMCOE Extracurricular Committee &copy; 2026
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

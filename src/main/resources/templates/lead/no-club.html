@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Lead Portal - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-5 text-center">
+            <div class="card border-0 shadow-sm rounded-4 p-5 max-w-600 mx-auto bg-white">
+                <i class="bi bi-shield-exclamation fs-1 text-warning mb-3"></i>
+                <h3 class="fw-bold text-dark mb-2">No Club Assigned Yet</h3>
+                <p class="text-muted">
+                    Your account has the Club Lead role, but you have not yet been assigned to head a specific college club by the VPMCOE Admin.
+                </p>
+                <p class="text-muted small">
+                    Please contact the Dean / Administrator at <strong>admin@vpmcoe.ac.in</strong> to assign your club.
+                </p>
+                <div>
+                    <a th:href="@{/}" class="btn btn-outline-primary rounded-3">Return to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

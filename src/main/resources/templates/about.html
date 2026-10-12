@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>About Us - VPM College of Engineering ClubConnect</title>
+</head>
+<body>
+<div id="content">
+    <div class="container py-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-3">
+                        Vidya Prasarak Mandal's College of Engineering
+                    </span>
+
+                    <h1 class="fw-bold text-dark mb-3">
+                        About VPM College of Engineering ClubConnect
+                    </h1>
+
+                    <p class="lead text-muted">
+                        Vidya Prasarak Mandal's College of Engineering, Thane, Maharashtra,
+                        provides an active ecosystem of student-led clubs and extracurricular
+                        activities spanning technology, innovation, arts, culture, sports,
+                        leadership, and research.
+                    </p>
+                </div>
+
+                <div class="col-lg-4 text-center">
+                    <div class="p-3 bg-light rounded-4 border">
+                        <a href="https://vpmcoethane.org" target="_blank" rel="noopener noreferrer">
+                            <img th:src="@{/images/college-logo.jpg}"
+                                 alt="Vidya Prasarak Mandal's College of Engineering Logo"
+                                 class="img-fluid"
+                                 style="max-height: 250px; width: 100%; object-fit: contain; cursor: pointer;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row g-4 mt-2">
+                <div class="col-md-6">
+                    <h4 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-bullseye text-primary me-2"></i>
+                        Our Mission
+                    </h4>
+
+                    <p class="text-muted">
+                        To provide an equitable, transparent, and digitally-enabled platform
+                        where every student can discover, participate in, and lead
+                        extracurricular activities that complement academic learning and
+                        personal development.
+                    </p>
+                </div>
+
+                <div class="col-md-6">
+                    <h4 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-eye text-primary me-2"></i>
+                        Our Vision
+                    </h4>
+
+                    <p class="text-muted">
+                        To cultivate well-rounded engineering graduates equipped with
+                        technological competence, creativity, leadership skills, cultural
+                        awareness, teamwork, and a spirit of innovation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded-4 border border-primary-subtle">
+                <h5 class="fw-bold text-primary mb-2">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    How to Get Involved?
+                </h5>
+
+                <p class="text-muted mb-0 small">
+                    Any enrolled student at Vidya Prasarak Mandal's College of Engineering
+                    can register on ClubConnect, explore official student clubs, submit an
+                    application to join club committees, participate in extracurricular
+                    activities, and register for upcoming events, competitions, workshops,
+                    hackathons, tournaments, and seminars.
+                </p>
+                                                                                                                        </div>
+                                                                                                                    </div>
+    </div>
+</div>
+</body>
+</html>

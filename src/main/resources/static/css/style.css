@@ -1,0 +1,552 @@
+:root {
+    --primary-color: #1a56db;
+    --primary-dark: #1e3a8a;
+    --primary-light: #e1effe;
+    --secondary-color: #4b5563;
+    --success-color: #057a55;
+    --warning-color: #d97706;
+    --danger-color: #e02424;
+    --bg-body: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+a {
+    transition: all 0.2s ease;
+}
+
+.navbar-custom {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    text-decoration: none;
+    padding: 0;
+}
+
+.navbar-brand-custom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #1e3a8a, #1a56db);
+    padding: 6px 15px 6px 6px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-college-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.navbar-brand-divider {
+    width: 1px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.navbar-clubconnect {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.navbar-clubconnect i {
+    font-size: 1.15rem;
+}
+
+.brand-badge {
+    background: linear-gradient(135deg, #1e3a8a, #1a56db);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.college-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
+    color: #ffffff;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-gradient::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+}
+
+.hover-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: #cbd5e1;
+}
+
+.stat-card {
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: #ffffff;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.badge-tech {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-cultural {
+    background-color: #ffe4e6;
+    color: #9f1239;
+}
+
+.badge-sports {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-research {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+}
+
+.badge-literary {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.ticket-card {
+    max-width: 650px;
+    margin: 2rem auto;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    position: relative;
+}
+
+.ticket-header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #ffffff;
+    padding: 1.75rem;
+    position: relative;
+}
+
+.ticket-divider {
+    position: relative;
+    border-top: 2px dashed #cbd5e1;
+    margin: 0;
+}
+
+.ticket-divider::before,
+.ticket-divider::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: var(--bg-body);
+    border-radius: 50%;
+    top: -12px;
+}
+
+.ticket-divider::before {
+    left: -12px;
+}
+
+.ticket-divider::after {
+    right: -12px;
+}
+
+.ticket-barcode {
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 4px;
+    background: #f1f5f9;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    display: inline-block;
+}
+
+.user-avatar-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-avatar-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.profile-photo-preview {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    color: #1d4ed8;
+    font-size: 2.5rem;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(29, 78, 216, 0.14);
+    position: relative;
+}
+
+.profile-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.profile-camera-preview {
+    width: 100%;
+    max-height: 320px;
+    border-radius: 1rem;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+.about-college-logo {
+    width: 180px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+}
+
+.about-college-logo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.about-college-logo-link:hover .about-college-logo {
+    transform: scale(1.03);
+}
+
+.footer-college-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.footer-brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+footer {
+    background-color: #ffffff;
+}
+
+footer a:hover {
+    color: var(--primary-color) !important;
+}
+
+.card {
+    border-color: var(--border-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #1649bc;
+    border-color: #1649bc;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+.login-card {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.login-header {
+    background: linear-gradient(135deg, #1e3a8a, #1a56db);
+    color: #ffffff;
+    padding: 2rem 2rem 1.8rem;
+    text-align: center;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+}
+
+.login-college-logo {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 4px;
+}
+
+.brand-divider {
+    width: 2px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.login-clubconnect {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.login-clubconnect i {
+    font-size: 1.5rem;
+}
+
+.login-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.login-header p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+@media (max-width: 991.98px) {
+
+    .navbar-collapse {
+        padding-top: 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem;
+    }
+
+}
+
+@media (max-width: 575.98px) {
+
+    .navbar-brand-custom {
+        gap: 8px;
+        padding: 5px 10px 5px 5px;
+    }
+
+    .navbar-college-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .navbar-brand-divider {
+        height: 26px;
+    }
+
+    .navbar-clubconnect {
+        font-size: 0.95rem;
+        gap: 6px;
+    }
+
+    .navbar-clubconnect i {
+        font-size: 0.95rem;
+    }
+
+    .login-header {
+        padding: 1.5rem 1rem;
+    }
+
+    .login-brand {
+        gap: 10px;
+    }
+
+    .login-college-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .brand-divider {
+        height: 40px;
+    }
+
+    .login-clubconnect {
+        font-size: 1.25rem;
+    }
+
+    .login-clubconnect i {
+        font-size: 1.2rem;
+    }
+
+    .login-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .footer-brand-wrapper {
+        gap: 8px;
+    }
+
+    .footer-college-logo {
+        width: 46px;
+        height: 46px;
+    }
+
+}
+
+@media print {
+
+    body * {
+        visibility: hidden;
+    }
+
+    .ticket-card,
+    .ticket-card * {
+        visibility: visible;
+    }
+
+    .ticket-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border: 1px solid #000000;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+}

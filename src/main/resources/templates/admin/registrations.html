@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Registration Requests - VPMCOE ClubConnect</title>
+</head>
+<body>
+<div id="content">
+    <div class="container py-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="badge bg-danger rounded-pill px-3 py-2 mb-2">
+                        <i class="bi bi-shield-check me-1"></i> Administrator Review
+                    </span>
+                    <h2 class="fw-bold text-dark mb-1">Registration Requests</h2>
+                    <p class="text-muted mb-0">Review and approve new student accounts before they can access ClubConnect.</p>
+                </div>
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary rounded-3 fw-semibold">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(registrations)}" class="card border-0 shadow-sm rounded-4 bg-white">
+            <div class="card-body text-center py-5">
+                <div class="display-5 text-success mb-3"><i class="bi bi-check2-circle"></i></div>
+                <h4 class="fw-bold text-dark">No pending registrations</h4>
+                <p class="text-muted mb-0">New student registration requests will appear here for review.</p>
+            </div>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(registrations)}" class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Full Name</th>
+                        <th>Email</th>
+                        <th>PRN</th>
+                        <th>Department</th>
+                        <th>Academic Year</th>
+                        <th>Phone</th>
+                        <th>Registered On</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${registrations}">
+                        <td class="ps-4 fw-semibold text-dark" th:text="${user.fullName}">Student Name</td>
+                        <td th:text="${user.email}">student@example.com</td>
+                        <td th:text="${user.prn ?: '—'}">PRN</td>
+                        <td th:text="${user.department ?: '—'}">Department</td>
+                        <td th:text="${user.academicYear ?: '—'}">Year</td>
+                        <td th:text="${user.phone ?: '—'}">Phone</td>
+                        <td class="text-muted small" th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy, hh:mm a')}">08 Sep 2026</td>
+                        <td class="text-end pe-4">
+                            <div class="d-inline-flex gap-2">
+                                <form th:action="@{/admin/registrations/{id}/approve(id=${user.id})}" method="post"
+                                      onsubmit="return confirm('Approve this registration? The student will be able to log in.');">
+                                    <button type="submit" class="btn btn-success btn-sm rounded-3 fw-semibold">
+                                        <i class="bi bi-check-lg me-1"></i> Approve
+                                    </button>
+                                </form>
+                                <form th:action="@{/admin/registrations/{id}/reject(id=${user.id})}" method="post"
+                                      onsubmit="return confirm('Reject and permanently remove this registration request?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-3 fw-semibold">
+                                        <i class="bi bi-x-lg me-1"></i> Reject
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

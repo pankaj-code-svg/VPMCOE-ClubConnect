@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Student Registration - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                        <div class="p-4 bg-primary text-white text-center position-relative">
+                            <h4 class="fw-bold mb-1"><i class="bi bi-person-plus-fill me-2"></i> Student Registration</h4>
+                            <p class="small text-light text-opacity-75 mb-0">Join VPMCOE clubs, hackathons, and activities</p>
+                        </div>
+
+                        <div class="card-body p-4 p-md-5">
+                            <form th:action="@{/register}" th:object="${user}" method="post">
+
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label fw-semibold small text-dark">Full Name *</label>
+                                    <input type="text" class="form-control rounded-3" id="fullName" th:field="*{fullName}" placeholder="e.g. Rohan Kadam" required>
+                                    <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger small mt-1"></div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label fw-semibold small text-dark">College Email *</label>
+                                        <input type="email" class="form-control rounded-3" id="email" th:field="*{email}" placeholder="prn@vpmcoe.ac.in" required>
+                                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger small mt-1"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prn" class="form-label fw-semibold small text-dark">PRN / Student ID *</label>
+                                        <input type="text" class="form-control rounded-3" id="prn" th:field="*{prn}" placeholder="e.g. PRN2025COMP045" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="department" class="form-label fw-semibold small text-dark">Department *</label>
+                                        <select class="form-select rounded-3" id="department" th:field="*{department}" required>
+                                            <option value="" disabled selected>Select Department</option>
+                                            <option value="Computer Engineering">Computer Engineering</option>
+                                            <option value="Information Technology">Information Technology</option>
+                                            <option value="AI & Data Science">AI & Data Science</option>
+                                            <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+                                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                            <option value="Civil Engineering">Civil Engineering</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="academicYear" class="form-label fw-semibold small text-dark">Academic Year *</label>
+                                        <select class="form-select rounded-3" id="academicYear" th:field="*{academicYear}" required>
+                                            <option value="" disabled selected>Select Year</option>
+                                            <option value="First Year (FE)">First Year (FE)</option>
+                                            <option value="Second Year (SE)">Second Year (SE)</option>
+                                            <option value="Third Year (TE)">Third Year (TE)</option>
+                                            <option value="Final Year (BE)">Final Year (BE)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label fw-semibold small text-dark">Contact Number</label>
+                                        <input type="tel" class="form-control rounded-3" id="phone" th:field="*{phone}" placeholder="+91 98765 43210">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="password" class="form-label fw-semibold small text-dark">Password *</label>
+                                        <input type="password" class="form-control rounded-3" id="password" th:field="*{password}" placeholder="Minimum 6 characters" required>
+                                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger small mt-1"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label small text-muted" for="agreeTerms">
+                                        I agree to the VPMCOE Student Extracurricular Code of Conduct.
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2-5 rounded-3 fw-bold shadow-sm mb-3">
+                                    <i class="bi bi-check-circle me-1"></i> Complete Registration
+                                </button>
+                            </form>
+
+                            <div class="text-center small text-muted">
+                                Already registered?
+                                <a th:href="@{/login}" class="fw-bold text-primary text-decoration-none">Sign In Here</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

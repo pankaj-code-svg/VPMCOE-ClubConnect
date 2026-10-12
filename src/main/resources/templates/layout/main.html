@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, content)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:replace="${title}">ClubConnect - VPM College of Engineering</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           th:href="@{/}">
+
+            <div class="navbar-brand-custom">
+
+                <img th:src="@{/images/college-logo.jpg}"
+                     src="/images/college-logo.jpg"
+                     alt="VPM College of Engineering Logo"
+                     class="navbar-college-logo">
+
+                <div class="navbar-brand-divider"></div>
+
+                <div class="navbar-clubconnect">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    <span>ClubConnect</span>
+                </div>
+
+            </div>
+
+        </a>
+
+        <button class="navbar-toggler border-0"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMain"
+                aria-controls="navbarMain"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse"
+             id="navbarMain">
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-dark px-3"
+                       th:href="@{/}">
+                        <i class="bi bi-house-door me-1 text-primary"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-dark px-3"
+                       th:href="@{/clubs}">
+                        <i class="bi bi-diagram-3 me-1 text-primary"></i>
+                        Clubs
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-dark px-3"
+                       th:href="@{/events}">
+                        <i class="bi bi-calendar-event me-1 text-primary"></i>
+                        Events
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fw-medium text-dark px-3"
+                       th:href="@{/about}">
+                        <i class="bi bi-info-circle me-1 text-primary"></i>
+                        About
+                    </a>
+                </li>
+
+            </ul>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <div sec:authorize="isAnonymous()"
+                     class="d-flex gap-2">
+
+                    <a th:href="@{/login}"
+                       class="btn btn-outline-primary fw-semibold px-3 rounded-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        Log In
+                    </a>
+
+                    <a th:href="@{/register}"
+                       class="btn btn-primary fw-semibold px-3 rounded-3 shadow-sm">
+                        <i class="bi bi-person-plus me-1"></i>
+                        Register
+                    </a>
+
+                </div>
+
+                <div sec:authorize="isAuthenticated()"
+                     class="d-flex align-items-center gap-3">
+
+                    <span sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/dashboard}"
+                           class="btn btn-sm btn-outline-danger fw-semibold">
+                            <i class="bi bi-shield-lock me-1"></i>
+                            Admin Portal
+                        </a>
+                    </span>
+
+                    <span sec:authorize="hasRole('CLUB_LEAD')">
+                        <a th:href="@{/lead/dashboard}"
+                           class="btn btn-sm btn-outline-primary fw-semibold">
+                            <i class="bi bi-speedometer2 me-1"></i>
+                            Lead Portal
+                        </a>
+                    </span>
+
+                    <span sec:authorize="hasRole('STUDENT')">
+                        <a th:href="@{/student/dashboard}"
+                           class="btn btn-sm btn-outline-success fw-semibold">
+                            <i class="bi bi-grid-1x2 me-1"></i>
+                            My Dashboard
+                        </a>
+                    </span>
+
+                    <div class="dropdown">
+
+                        <button class="btn btn-light d-flex align-items-center gap-2 py-1 px-2 border rounded-pill shadow-sm dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+
+                            <div class="user-avatar-bubble">
+                                <img sec:authorize="isAuthenticated()"
+                                     class="user-avatar-photo"
+                                     th:src="@{/profile-photo/{id}(id=${#authentication.principal.id})}"
+                                     alt="Profile photo" onerror="this.style.display='none'">
+                                <span sec:authorize="isAuthenticated()"
+                                      th:text="${#strings.isEmpty(#authentication.principal.user.fullName) ? 'U' : #strings.substring(#authentication.principal.user.fullName, 0, 1)}">U</span>
+                            </div>
+
+                            <span class="fw-semibold text-dark small d-none d-md-inline"
+                                  sec:authentication="name">
+                                User
+                            </span>
+
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3"
+                            style="min-width: 220px;">
+
+                            <li class="px-3 py-2 border-bottom">
+
+                                <div class="fw-bold text-dark"
+                                     sec:authentication="name">
+                                    User
+                                </div>
+
+                            </li>
+
+                            <li sec:authorize="isAuthenticated()">
+                                <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#profilePhotoModal">
+                                    <i class="bi bi-camera me-2 text-muted"></i>
+                                    Upload / Change picture
+                                </button>
+                            </li>
+
+                            <li sec:authorize="hasRole('STUDENT')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/student/profile}">
+                                    <i class="bi bi-person-gear me-2 text-muted"></i>
+                                    My Profile
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('CLUB_LEAD')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/lead/profile}">
+                                    <i class="bi bi-person-gear me-2 text-muted"></i>
+                                    My Profile
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/admin/profile}">
+                                    <i class="bi bi-person-gear me-2 text-muted"></i>
+                                    My Profile
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('STUDENT')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/student/dashboard}">
+                                    <i class="bi bi-bookmark-check me-2 text-muted"></i>
+                                    My Clubs & Events
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('CLUB_LEAD')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/lead/dashboard}">
+                                    <i class="bi bi-award me-2 text-muted"></i>
+                                    Manage Club
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/admin/dashboard}">
+                                    <i class="bi bi-shield-check me-2 text-muted"></i>
+                                    System Admin
+                                </a>
+                            </li>
+
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item py-2"
+                                   th:href="@{/admin/registrations}">
+                                    <i class="bi bi-person-check me-2 text-muted"></i>
+                                    Registration Requests
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li>
+                                <form th:action="@{/logout}"
+                                      method="post"
+                                      class="m-0">
+
+                                    <button type="submit"
+                                            class="dropdown-item py-2 text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        Log Out
+                                    </button>
+
+                                </form>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div sec:authorize="isAuthenticated()" class="modal fade" id="profilePhotoModal" tabindex="-1" aria-labelledby="profilePhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <form th:action="@{/profile-photo/update}" method="post" enctype="multipart/form-data" id="profilePhotoForm">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold" id="profilePhotoModalLabel">Profile picture</h5>
+                        <div class="small text-muted">Choose a photo from your device or take one with your camera.</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="profile-photo-preview mx-auto mb-4" id="profilePhotoPreview">
+                        <img th:src="@{/profile-photo/{id}(id=${#authentication.principal.id})}"
+                             alt="Current profile photo" onerror="this.style.display='none'">
+                        <span th:text="${#strings.isEmpty(#authentication.principal.user.fullName) ? 'U' : #strings.substring(#authentication.principal.user.fullName, 0, 1)}">U</span>
+                    </div>
+                    <input class="d-none" type="file" id="profilePhotoFile" name="profilePhoto"
+                           accept="image/jpeg,image/png,image/webp,image/gif" required>
+                    <input class="d-none" type="file" id="profilePhotoCamera"
+                           accept="image/jpeg,image/png,image/webp,image/gif" capture="user">
+                    <video class="profile-camera-preview d-none mx-auto mb-3" id="profileCameraPreview" autoplay playsinline></video>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-primary rounded-3" id="chooseProfilePhoto">
+                            <i class="bi bi-images me-1"></i> Choose from device
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary rounded-3" id="takeProfilePhoto">
+                            <i class="bi bi-camera me-1"></i> Take a photo
+                        </button>
+                        <button type="button" class="btn btn-primary rounded-3 d-none" id="captureProfilePhoto">
+                            <i class="bi bi-camera-fill me-1"></i> Capture photo
+                        </button>
+                    </div>
+                    <div class="form-text mt-3">JPG, PNG, WEBP, or GIF, up to 5 MB.</div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-3 fw-semibold" id="saveProfilePhoto" disabled>Save picture</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+
+    <div th:if="${successMessage}"
+         class="alert alert-success alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm"
+         role="alert">
+
+        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+
+        <div th:text="${successMessage}">
+            Operation completed successfully.
+        </div>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
+
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="alert alert-danger alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm"
+         role="alert">
+
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+
+        <div th:text="${errorMessage}">
+            An error occurred.
+        </div>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
+
+    </div>
+
+</div>
+
+<main class="py-4">
+
+    <div th:replace="${content}"></div>
+
+</main>
+
+<footer class="bg-white border-top py-5 mt-auto no-print">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-lg-5">
+
+                <div class="footer-brand-wrapper mb-3">
+
+                    <img th:src="@{/images/college-logo.jpg}"
+                         src="/images/college-logo.jpg"
+                         alt="VPM College of Engineering Logo"
+                         class="footer-college-logo">
+
+                    <div>
+
+                        <div class="brand-badge">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            ClubConnect
+                        </div>
+
+                        <div class="college-tag mt-1">
+                            VPM College of Engineering
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p class="text-muted small pe-lg-4 mb-3">
+                    The unified student club and extracurricular activity
+                    management portal of Vidya Prasarak Mandal's College of
+                    Engineering, Thane. Empowering students through technology,
+                    culture, sports, innovation, research, and extracurricular
+                    activities.
+                </p>
+
+                <div class="d-flex gap-2 flex-wrap">
+
+                    <span class="badge bg-light text-secondary border">
+                        Spring Boot 3.3
+                    </span>
+
+                    <span class="badge bg-light text-secondary border">
+                        Bootstrap 5.3
+                    </span>
+
+                    <span class="badge bg-light text-secondary border">
+                        Java 21 LTS
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="col-6 col-lg-2 offset-lg-1">
+
+                <h6 class="fw-bold text-dark mb-3">
+                    Quick Links
+                </h6>
+
+                <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
+
+                    <li>
+                        <a th:href="@{/}"
+                           class="text-decoration-none text-muted">
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/clubs}"
+                           class="text-decoration-none text-muted">
+                            Browse Clubs
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/events}"
+                           class="text-decoration-none text-muted">
+                            Upcoming Events
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/about}"
+                           class="text-decoration-none text-muted">
+                            About College
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-6 col-lg-2">
+
+                <h6 class="fw-bold text-dark mb-3">
+                    College Clubs
+                </h6>
+
+                <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
+
+                    <li>
+                        <a th:href="@{/clubs(category='TECHNICAL')}"
+                           class="text-decoration-none text-muted">
+                            Technical Clubs
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/clubs(category='CULTURAL')}"
+                           class="text-decoration-none text-muted">
+                            Cultural Clubs
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/clubs(category='SPORTS')}"
+                           class="text-decoration-none text-muted">
+                            Sports Clubs
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/clubs(category='RESEARCH')}"
+                           class="text-decoration-none text-muted">
+                            Research Clubs
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="col-lg-2">
+
+                <h6 class="fw-bold text-dark mb-3">
+                    Campus Contact
+                </h6>
+
+                <p class="text-muted small mb-2">
+                    <i class="bi bi-geo-alt me-1 text-primary"></i>
+                    Chendani, Thane, Maharashtra, India
+                </p>
+
+                <p class="text-muted small mb-2">
+
+                    <i class="bi bi-globe me-1 text-primary"></i>
+
+                    <a href="https://vpmcoethane.org/"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-decoration-none text-muted">
+                        vpmcoethane.org
+                    </a>
+
+                </p>
+
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-building me-1 text-primary"></i>
+                    VPM College of Engineering
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr class="my-4 text-secondary opacity-25">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center text-muted small">
+
+            <div>
+                &copy; 2026 VPM College of Engineering ClubConnect.
+                All rights reserved.
+            </div>
+
+            <div class="mt-2 mt-sm-0">
+
+                Built with
+                <i class="bi bi-heart-fill text-danger"></i>
+                for VPM College of Engineering
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (() => {
+        const form = document.getElementById('profilePhotoForm');
+        const fileInput = document.getElementById('profilePhotoFile');
+        const cameraInput = document.getElementById('profilePhotoCamera');
+        const preview = document.getElementById('profilePhotoPreview');
+        const saveButton = document.getElementById('saveProfilePhoto');
+        const cameraPreview = document.getElementById('profileCameraPreview');
+        const captureButton = document.getElementById('captureProfilePhoto');
+        let cameraStream;
+        if (!form) return;
+
+        document.getElementById('chooseProfilePhoto').addEventListener('click', () => fileInput.click());
+        document.getElementById('takeProfilePhoto').addEventListener('click', async () => {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                cameraInput.click();
+                return;
+            }
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                cameraPreview.srcObject = cameraStream;
+                cameraPreview.classList.remove('d-none');
+                captureButton.classList.remove('d-none');
+            } catch (error) {
+                cameraInput.click();
+            }
+        });
+
+        const showPreview = (input) => {
+            const file = input.files[0];
+            if (!file) return;
+            const transfer = new DataTransfer();
+            transfer.items.add(file);
+            fileInput.files = transfer.files;
+            preview.replaceChildren();
+            const image = document.createElement('img');
+            image.alt = 'Selected profile photo';
+            image.src = URL.createObjectURL(file);
+            preview.appendChild(image);
+            saveButton.disabled = false;
+        };
+
+        fileInput.addEventListener('change', () => showPreview(fileInput));
+        cameraInput.addEventListener('change', () => showPreview(cameraInput));
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraPreview.videoWidth;
+            canvas.height = cameraPreview.videoHeight;
+            canvas.getContext('2d').drawImage(cameraPreview, 0, 0);
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+                const file = new File([blob], 'profile-photo.jpg', { type: 'image/jpeg' });
+                const transfer = new DataTransfer();
+                transfer.items.add(file);
+                fileInput.files = transfer.files;
+                showPreview(fileInput);
+                stopCamera();
+            }, 'image/jpeg', 0.92);
+        });
+
+        const stopCamera = () => {
+            if (cameraStream) cameraStream.getTracks().forEach((track) => track.stop());
+            cameraStream = null;
+            cameraPreview.srcObject = null;
+            cameraPreview.classList.add('d-none');
+            captureButton.classList.add('d-none');
+        };
+
+        document.getElementById('profilePhotoModal').addEventListener('hidden.bs.modal', stopCamera);
+    })();
+</script>
+
+</body>
+</html>

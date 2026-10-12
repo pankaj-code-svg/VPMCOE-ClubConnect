@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title th:text="${event.title} + ' - VPMCOE ClubConnect'">Event Details</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                            <span class="badge bg-primary-subtle text-primary px-3 py-1-5 rounded-pill fw-semibold" th:text="${event.club.name}">
+                                Technology Club
+                            </span>
+                            <span class="badge bg-light text-dark border px-3 py-1-5 rounded-pill" th:text="${event.mode}">
+                                OFFLINE
+                            </span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1-5 rounded-pill" th:text="${event.status}">
+                                UPCOMING
+                            </span>
+                        </div>
+
+                        <h1 class="fw-bold text-dark mb-3" th:text="${event.title}">HackVPM 2026: 24-Hour Hackathon</h1>
+
+                        <img th:if="${event.posterImageData != null}" th:src="@{/events/{id}/poster(id=${event.id})}"
+                             class="img-fluid rounded-4 mb-4" alt="Event poster">
+                        <img th:if="${event.posterImageData == null and event.bannerImage != null and !event.bannerImage.isEmpty()}"
+                             th:src="${event.bannerImage}" class="img-fluid rounded-4 mb-4" alt="Event poster">
+
+                        <p class="text-muted lead" style="line-height: 1.8;" th:text="${event.description}">
+                            Detailed description of the workshop or event.
+                        </p>
+
+                        <hr class="my-4">
+
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-clock-history text-primary me-2"></i> Schedule & Timeline</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <div class="text-muted small">Event Starts</div>
+                                    <div class="fw-bold text-dark" th:text="${#temporals.format(event.eventDate, 'EEEE, dd MMMM yyyy - hh:mm a')}">Start Date</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" th:if="${event.endDate != null}">
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <div class="text-muted small">Event Concludes</div>
+                                    <div class="fw-bold text-dark" th:text="${#temporals.format(event.endDate, 'EEEE, dd MMMM yyyy - hh:mm a')}">End Date</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4" th:if="${event.onlineLink != null and !event.onlineLink.isEmpty()}">
+                            <div class="alert alert-info d-flex align-items-center rounded-3">
+                                <i class="bi bi-broadcast fs-4 me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Virtual Event Link</div>
+                                    <a th:href="${event.onlineLink}" target="_blank" class="alert-link text-break" th:text="${event.onlineLink}">https://meet.google.com/...</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white sticky-top" style="top: 90px;">
+                        <h5 class="fw-bold text-dark mb-3">Event Registration</h5>
+
+                        <div class="p-3 bg-light rounded-3 mb-4 border">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Total Seats:</span>
+                                <span class="fw-bold text-dark" th:text="${event.maxCapacity}">120</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Seats Remaining:</span>
+                                <span class="fw-bold text-success" th:text="${remainingSeats}">85</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar"
+                                     th:style="'width: ' + (${registeredCount * 100 / event.maxCapacity}) + '%'">
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled small d-flex flex-column gap-3 mb-4">
+                            <li>
+                                <div class="text-muted"><i class="bi bi-geo-alt text-danger me-2"></i> Venue / Location</div>
+                                <div class="fw-semibold text-dark" th:text="${event.venue}">Central Computing Labs</div>
+                            </li>
+                            <li>
+                                <div class="text-muted"><i class="bi bi-people text-primary me-2"></i> Host Organization</div>
+                                <div class="fw-semibold text-dark" th:text="${event.club.name}">Technology Club</div>
+                            </li>
+                            <li th:if="${event.registrationDeadline != null}">
+                                <div class="text-muted"><i class="bi bi-alarm text-warning me-2"></i> Registration Deadline</div>
+                                <div class="fw-semibold text-dark" th:text="${#temporals.format(event.registrationDeadline, 'dd MMM yyyy - hh:mm a')}">Deadline</div>
+                            </li>
+                        </ul>
+
+                        <div sec:authorize="isAnonymous()">
+                            <a th:href="@{/login}" class="btn btn-primary w-100 py-2-5 rounded-3 fw-bold shadow-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Register
+                            </a>
+                            <div class="text-center mt-2 small text-muted">VPMCOE student login required</div>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()">
+
+                            <div th:if="${userRegistration != null}">
+                                <div class="alert alert-success text-center rounded-3 mb-3 p-3">
+                                    <i class="bi bi-check-circle-fill fs-3 d-block text-success mb-1"></i>
+                                    <div class="fw-bold">You are Registered!</div>
+                                    <div class="small text-muted mb-2">Ticket # <span class="fw-mono fw-bold" th:text="${userRegistration.ticketNumber}">VPM-01</span></div>
+                                    <a th:href="@{/student/tickets/{id}(id=${userRegistration.id})}" class="btn btn-sm btn-success w-100 fw-bold rounded-3">
+                                        <i class="bi bi-qr-code me-1"></i> View Entry Pass
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div th:if="${userRegistration == null}">
+                                <form th:action="@{/student/events/{id}/register(id=${event.id})}" method="post">
+                                    <button type="submit" class="btn btn-primary w-100 py-2-5 rounded-3 fw-bold shadow-sm"
+                                            th:disabled="${remainingSeats <= 0}">
+                                        <i class="bi bi-ticket-perforated-fill me-1"></i>
+                                        <span th:text="${remainingSeats > 0 ? 'Claim Free Entry Pass' : 'Event Full'}">Claim Free Entry Pass</span>
+                                    </button>
+                                </form>
+                                <div class="text-center mt-2 small text-muted">Instant pass generation for VPMCOE students</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

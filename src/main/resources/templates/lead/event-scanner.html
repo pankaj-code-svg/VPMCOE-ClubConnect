@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head><title>Event Pass Scanner</title></head>
+<body>
+<div id="content">
+    <div class="container py-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div>
+                <a th:href="@{/lead/events/{id}/attendees(id=${event.id})}" class="small text-decoration-none">Back to attendee roster</a>
+                <h2 class="fw-bold mt-2 mb-1">Entry Pass Scanner</h2>
+                <div class="text-muted"> <span th:text="${event.title}">Event</span> · <span th:text="${event.club.name}">Club</span></div>
+            </div>
+            <a th:href="@{/lead/attendance}" class="btn btn-outline-primary">Attendance Records</a>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4">
+                    <video id="cameraPreview" class="w-100 rounded-3 bg-dark" style="max-height: 440px; min-height: 240px; object-fit: cover" playsinline></video>
+                    <div class="d-flex gap-2 mt-3">
+                        <button id="startCamera" type="button" class="btn btn-primary"><i class="bi bi-camera me-1"></i> Start Camera Scanner</button>
+                        <button id="stopCamera" type="button" class="btn btn-outline-secondary" disabled>Stop Camera</button>
+                    </div>
+                    <div id="cameraMessage" class="small text-muted mt-2">Allow camera access to scan the QR barcode on a student’s pass. You can also enter the pass ID below.</div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4">
+                    <h5 class="fw-bold">Enter pass ID</h5>
+                    <form id="scanForm" th:action="@{/lead/events/{id}/scan(id=${event.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <label for="ticketNumber" class="form-label">Ticket reference</label>
+                        <div class="input-group">
+                            <input id="ticketNumber" name="ticketNumber" class="form-control" autocomplete="off" required placeholder="VPM-123-ABCD">
+                            <button type="submit" class="btn btn-outline-primary">Verify</button>
+                        </div>
+                    </form>
+                    <div id="scanResult" class="alert mt-3 d-none" role="status"></div>
+                    <div id="studentDetails" class="border rounded-3 p-3 mt-2 d-none">
+                        <div class="fw-bold fs-5" id="studentName"></div>
+                        <div class="text-muted" id="studentPrn"></div>
+                        <div class="text-muted" id="studentCourse"></div>
+                        <div class="text-muted" id="studentClub"></div>
+                        <div class="text-muted" id="studentEvent"></div>
+                        <div class="small text-muted" id="attendanceTime"></div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0">A pass from a different club or event will be rejected, attendance will remain unchanged, and an incident report will be sent to the administrator.</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(() => {
+    const video = document.getElementById('cameraPreview');
+    const startButton = document.getElementById('startCamera');
+    const stopButton = document.getElementById('stopCamera');
+    const cameraMessage = document.getElementById('cameraMessage');
+    const form = document.getElementById('scanForm');
+    const ticketInput = document.getElementById('ticketNumber');
+    const resultBox = document.getElementById('scanResult');
+    const detailsBox = document.getElementById('studentDetails');
+    let stream;
+    let detector;
+    let running = false;
+    let processing = false;
+
+    function stopCamera() {
+        running = false;
+        processing = false;
+        if (stream) stream.getTracks().forEach(track => track.stop());
+        stream = null;
+        video.srcObject = null;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    }
+
+    async function showResult(data) {
+        resultBox.className = `alert mt-3 ${data.success ? 'alert-success' : data.incident ? 'alert-danger' : 'alert-warning'}`;
+        resultBox.textContent = data.message;
+        resultBox.classList.remove('d-none');
+        detailsBox.classList.toggle('d-none', !data.name);
+        if (data.name) {
+            document.getElementById('studentName').textContent = data.name;
+            document.getElementById('studentPrn').textContent = `Roll no.: ${data.prn || 'Not provided'}`;
+            document.getElementById('studentCourse').textContent = `${data.department || 'Branch unavailable'} · ${data.academicYear || 'Year unavailable'}`;
+            document.getElementById('studentClub').textContent = `Registered club: ${data.club || 'Unavailable'}`;
+            document.getElementById('studentEvent').textContent = `Registered event: ${data.event || 'Unavailable'}`;
+            document.getElementById('attendanceTime').textContent = data.attendedAt ? `Attendance time: ${data.attendedAt.replace('T', ' ')}` : '';
+        }
+    }
+
+    async function submitPass(ticketNumber) {
+        if (processing) return;
+        processing = true;
+        ticketInput.value = ticketNumber;
+        const body = new URLSearchParams(new FormData(form));
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body
+            });
+            const data = await response.json();
+            await showResult(data);
+        } catch (error) {
+            resultBox.className = 'alert alert-danger mt-3';
+            resultBox.textContent = 'Could not verify this pass. Please try again.';
+            resultBox.classList.remove('d-none');
+        } finally {
+            processing = false;
+        }
+    }
+
+    async function detectLoop() {
+        while (running) {
+            try {
+                const codes = await detector.detect(video);
+                if (codes.length && codes[0].rawValue) {
+                    cameraMessage.textContent = 'Barcode detected. Verifying pass…';
+                    await submitPass(codes[0].rawValue);
+                    stopCamera();
+                    break;
+                }
+            } catch (error) {
+                cameraMessage.textContent = 'Unable to read the barcode. Use the ticket reference field below.';
+                stopCamera();
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 250));
+        }
+    }
+
+    startButton.addEventListener('click', async () => {
+        if (!('BarcodeDetector' in window)) {
+            cameraMessage.textContent = 'This browser does not support camera barcode scanning. Enter the ticket reference manually.';
+            return;
+        }
+        try {
+            detector = new BarcodeDetector({formats: ['qr_code']});
+            stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: {ideal: 'environment'}}, audio: false});
+            video.srcObject = stream;
+            await video.play();
+            running = true;
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            cameraMessage.textContent = 'Point the camera at the QR barcode on the event pass.';
+            detectLoop();
+        } catch (error) {
+            cameraMessage.textContent = 'Camera access is unavailable. Allow camera permission or enter the ticket reference manually.';
+            stopCamera();
+        }
+    });
+
+    stopButton.addEventListener('click', stopCamera);
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        submitPass(ticketInput.value.trim());
+    });
+})();
+</script>
+</body>
+</html>

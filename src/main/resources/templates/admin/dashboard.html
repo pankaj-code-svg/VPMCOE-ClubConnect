@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Admin Executive Center - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge bg-danger px-3 py-1-5 rounded-pill">Dean & Administrator Center</span>
+                            <span class="badge bg-light text-dark border">Executive Analytics</span>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-0">College Extracurricular Overview</h2>
+                        <div class="text-muted small mt-1">
+                            VPM Club Management Operations
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:href="@{/admin/events/new}" class="btn btn-info rounded-3 btn-sm fw-bold">
+                            <i class="bi bi-calendar-plus me-1"></i> Create Public Event
+                        </a>
+                        <a th:href="@{/admin/clubs/new}" class="btn btn-primary rounded-3 btn-sm fw-bold">
+                            <i class="bi bi-plus-circle me-1"></i> Add New Club
+                        </a>
+                        <a th:href="@{/admin/clubs}" class="btn btn-outline-primary rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-diagram-3 me-1"></i> All Clubs
+                        </a>
+                        <a th:href="@{/admin/clubs}" class="btn btn-outline-dark rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-person-badge me-1"></i> Change Club Leaders
+                        </a>
+                        <a th:href="@{/admin/users}" class="btn btn-outline-secondary rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-people me-1"></i> Users Directory
+                        </a>
+                        <a th:href="@{/admin/registrations}" class="btn btn-outline-success rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-person-check me-1"></i> Registration Requests
+                        </a>
+                        <a th:href="@{/admin/announcements}" class="btn btn-outline-danger rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-megaphone me-1"></i> Campus Notice
+                        </a>
+                        <a th:href="@{/admin/attendance}" class="btn btn-outline-success rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-clipboard-check me-1"></i> Attendance & Scan Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">College Clubs</span>
+                            <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-diagram-3-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${totalClubs}">5</div>
+                        <small class="text-primary"><a th:href="@{/admin/clubs}" class="text-decoration-none">Manage Clubs &rarr;</a></small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Pending Registrations</span>
+                            <div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-person-clock"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${pendingRegistrations}">0</div>
+                        <small class="text-danger"><a th:href="@{/admin/registrations}" class="text-decoration-none">Review requests &rarr;</a></small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Registered Students</span>
+                            <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-people-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${totalStudents}">300</div>
+                        <small class="text-success"><a th:href="@{/admin/users}" class="text-decoration-none">View Directory &rarr;</a></small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Total Events</span>
+                            <div class="stat-icon bg-info-subtle text-info"><i class="bi bi-calendar-event-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${totalEvents}">5</div>
+                        <small class="text-info">Hackathons & Seminars</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Event Registrations</span>
+                            <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-ticket-perforated-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${totalRegistrations}">450</div>
+                        <small class="text-warning">Across all activities</small>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-1"><i class="bi bi-pie-chart text-primary me-2"></i> Clubs by Category</h5>
+                        <p class="text-muted small mb-3">Distribution of extracurricular disciplines</p>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-1"><i class="bi bi-bar-chart-line text-success me-2"></i> Participation by Department</h5>
+                        <p class="text-muted small mb-3">Student event signups across VPMCOE engineering branches</p>
+                        <div class="position-relative" style="height: 260px;">
+                            <canvas id="deptChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-megaphone-fill text-danger me-2"></i> Active Notices</h5>
+                    <a th:href="@{/admin/announcements}" class="btn btn-sm btn-link text-decoration-none">Manage Notices</a>
+                </div>
+                <div th:if="${!recentAnnouncements.empty}" class="list-group list-group-flush">
+                    <div th:each="ann : ${recentAnnouncements}" class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-semibold text-dark" th:text="${ann.title}">Notice Title</div>
+                            <div class="small text-muted" th:text="${ann.content}">Notice content snippet...</div>
+                        </div>
+                        <span class="badge bg-light text-muted border ms-2" th:text="${#temporals.format(ann.createdAt, 'dd MMM')}">04 Sep</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script th:inline="javascript">
+            const catLabels = [[${categoryLabels}]];
+            const catCounts = [[${categoryCounts}]];
+
+            const deptLabels = [[${deptLabels}]];
+            const deptCounts = [[${deptCounts}]];
+
+            const ctxCat = document.getElementById('categoryChart');
+            if (ctxCat) {
+                new Chart(ctxCat, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catLabels,
+                        datasets: [{
+                            data: catCounts,
+                            backgroundColor: [
+                                '#1a56db',
+                                '#e02424',
+                                '#057a55',
+                                '#9061f9',
+                                '#d97706',
+                                '#4b5563'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ctxDept = document.getElementById('deptChart');
+            if (ctxDept) {
+                new Chart(ctxDept, {
+                    type: 'bar',
+                    data: {
+                        labels: deptLabels,
+                        datasets: [{
+                            label: 'Total Registrations',
+                            data: deptCounts,
+                            backgroundColor: '#1a56db',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0, font: { family: 'Inter' } },
+                                grid: { color: '#f1f5f9' }
+                            },
+                            x: {
+                                ticks: { font: { family: 'Inter', size: 11 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

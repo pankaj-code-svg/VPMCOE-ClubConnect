@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Edit Club Profile - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <div class="mb-4">
+                            <a th:href="@{/lead/dashboard}" class="text-decoration-none small text-muted">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                            </a>
+                            <h3 class="fw-bold text-dark mt-2 mb-1">Edit Club Profile</h3>
+                            <div class="text-muted small">Update official details for <span class="fw-semibold text-primary" th:text="${club.name}">Technology Club</span></div>
+                        </div>
+
+                        <form th:action="@{/lead/club/edit}" th:object="${club}" method="post">
+
+                            <div class="mb-3">
+                                <label for="shortTagline" class="form-label small fw-semibold text-dark">Tagline / Motto *</label>
+                                <input type="text" class="form-control rounded-3" id="shortTagline" th:field="*{shortTagline}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label small fw-semibold text-dark">About Club & Vision *</label>
+                                <textarea class="form-control rounded-3" id="description" th:field="*{description}" rows="5" required></textarea>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="roomVenue" class="form-label small fw-semibold text-dark">Club Room / Venue</label>
+                                    <input type="text" class="form-control rounded-3" id="roomVenue" th:field="*{roomVenue}" placeholder="e.g. Lab 304, IT Building">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="meetingSchedule" class="form-label small fw-semibold text-dark">Meeting Schedule</label>
+                                    <input type="text" class="form-control rounded-3" id="meetingSchedule" th:field="*{meetingSchedule}" placeholder="e.g. Every Wednesday at 4:30 PM">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="facultyAdvisor" class="form-label small fw-semibold text-dark">Faculty Advisor Name</label>
+                                    <input type="text" class="form-control rounded-3" id="facultyAdvisor" th:field="*{facultyAdvisor}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="contactEmail" class="form-label small fw-semibold text-dark">Club Contact Email</label>
+                                    <input type="email" class="form-control rounded-3" id="contactEmail" th:field="*{contactEmail}">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="bannerGradient" class="form-label small fw-semibold text-dark">Banner Gradient CSS</label>
+                                <input type="text" class="form-control rounded-3" id="bannerGradient" th:field="*{bannerGradient}" placeholder="linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)">
+                                <div class="form-text small">CSS gradient string used for club banner cards.</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <a th:href="@{/lead/dashboard}" class="btn btn-light rounded-3">Cancel</a>
+                                <button type="submit" class="btn btn-primary fw-bold rounded-3 px-4">
+                                    <i class="bi bi-check-circle me-1"></i> Save Club Details
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

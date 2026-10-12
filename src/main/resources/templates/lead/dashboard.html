@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Club Lead Portal - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge bg-primary px-3 py-1-5 rounded-pill">Club Lead Portal</span>
+                            <span class="badge bg-light text-dark border" th:if="${club != null}" th:text="${club.category.displayName}">Technical</span>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-0" th:text="${club != null ? club.name : 'Club Lead Dashboard'}">Technology Club</h2>
+                        <div class="text-muted small mt-1">
+                            Lead Coordinator: <span class="fw-semibold text-dark" th:text="${currentUser.fullName}">Aarav Deshmukh</span>
+                            &nbsp;•&nbsp;
+                            <span th:text="${currentUser.department}">Computer Engineering</span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2" th:if="${club != null}">
+                        <a th:href="@{/lead/events/new}" class="btn btn-primary rounded-3 btn-sm fw-bold">
+                            <i class="bi bi-plus-circle me-1"></i> New Event
+                        </a>
+                        <a th:href="@{/lead/members}" class="btn btn-outline-primary rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-people me-1"></i> Members (<span th:text="${pendingRequestsCount}">0</span>)
+                        </a>
+                        <a th:href="@{/lead/attendance}" class="btn btn-outline-success rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-clipboard-check me-1"></i> Attendance Records
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary rounded-3 btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#announcementModal">
+                            <i class="bi bi-megaphone me-1"></i> Post Notice
+                        </button>
+                        <a th:href="@{/lead/club/edit}" class="btn btn-outline-secondary rounded-3 btn-sm fw-semibold">
+                            <i class="bi bi-gear me-1"></i> Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row g-3 mb-4" th:if="${club != null}">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Active Members</span>
+                            <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-people-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${activeMembersCount}">15</div>
+                        <small class="text-success"><i class="bi bi-check-circle me-1"></i> Approved students</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Pending Requests</span>
+                            <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${pendingRequestsCount}">2</div>
+                        <small class="text-warning"><i class="bi bi-clock me-1"></i> Awaiting your review</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Events Created</span>
+                            <div class="stat-icon bg-info-subtle text-info"><i class="bi bi-calendar-check-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${eventsCount}">4</div>
+                        <small class="text-info"><i class="bi bi-check-all me-1"></i> Organized so far</small>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="stat-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small fw-semibold">Total Event Signups</span>
+                            <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-ticket-perforated-fill"></i></div>
+                        </div>
+                        <div class="fs-3 fw-bold text-dark" th:text="${totalSignups}">180</div>
+                        <small class="text-success"><i class="bi bi-graph-up me-1"></i> Student engagement</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" th:if="${club != null}">
+
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-person-lines-fill text-warning me-2"></i> Pending Join Applications
+                            </h5>
+                            <a th:href="@{/lead/members}" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                        </div>
+
+                        <div th:if="${!pendingRequests.empty}" class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Dept & Year</th>
+                                        <th>Reason / Skills</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="req : ${pendingRequests}">
+                                        <td>
+                                            <div class="fw-bold text-dark" th:text="${req.student.fullName}">Student Name</div>
+                                            <div class="small text-muted" th:text="${req.student.prn}">PRN</div>
+                                        </td>
+                                        <td class="small">
+                                            <div th:text="${req.student.department}">Dept</div>
+                                            <div class="text-muted" th:text="${req.student.academicYear}">Year</div>
+                                        </td>
+                                        <td class="small">
+                                            <div class="text-truncate" style="max-width: 180px;" th:text="${req.applicationReason}">Reason</div>
+                                            <span th:if="${req.skills != null and !req.skills.isEmpty()}" class="badge bg-light text-muted border text-truncate" style="max-width: 180px;" th:text="${req.skills}">Skills</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex justify-content-end gap-1">
+                                                <form th:action="@{/lead/members/{id}/approve(id=${req.id})}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-success rounded-3 px-2 py-1" title="Approve">
+                                                        <i class="bi bi-check-lg"></i>
+                                                    </button>
+                                                </form>
+                                                <form th:action="@{/lead/members/{id}/reject(id=${req.id})}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-3 px-2 py-1" title="Decline">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div th:if="${pendingRequests.empty}" class="text-center py-4 text-muted small">
+                            <i class="bi bi-check2-circle fs-3 d-block text-success mb-1"></i>
+                            All pending applications have been reviewed!
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-calendar3 text-primary me-2"></i> Club Events
+                            </h5>
+                            <a th:href="@{/lead/events}" class="btn btn-sm btn-link text-decoration-none">Manage</a>
+                        </div>
+
+                        <div th:if="${!recentEvents.empty}" class="d-flex flex-column gap-3">
+                            <div th:each="ev : ${recentEvents}" class="p-3 border rounded-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="fw-bold text-dark mb-0" th:text="${ev.title}">Event Title</h6>
+                                    <span class="badge bg-white text-dark border" th:text="${ev.mode}">OFFLINE</span>
+                                </div>
+                                <div class="small text-muted mb-2">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <span th:text="${#temporals.format(ev.eventDate, 'dd MMM yyyy - hh:mm a')}">Date</span>
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2 border-top">
+                                    <a th:href="@{/lead/events/{id}/attendees(id=${ev.id})}" class="btn btn-sm btn-primary rounded-3">
+                                        <i class="bi bi-person-check me-1"></i> View Attendee Roster
+                                    </a>
+                                    <a th:href="@{/lead/events/{id}/scanner(id=${ev.id})}" class="btn btn-sm btn-outline-success rounded-3">
+                                        <i class="bi bi-qr-code-scan me-1"></i> Scan Pass
+                                    </a>
+                                    <a th:href="@{/lead/events/{id}/edit(id=${ev.id})}" class="btn btn-sm btn-outline-secondary rounded-3">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${recentEvents.empty}" class="text-center py-4 text-muted small">
+                            No events scheduled yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalLabel" aria-hidden="true" th:if="${club != null}">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+                <div class="modal-content rounded-4 border-0 shadow">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title fw-bold text-dark" id="announcementModalLabel">
+                                <i class="bi bi-megaphone text-primary me-2"></i> Post Notice for <span th:text="${club.name}">Club</span>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <section class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-bold mb-0">Previous Notices</h6>
+                                    <span class="badge bg-light text-dark border" th:text="${clubAnnouncements != null ? clubAnnouncements.size() : 0}">0</span>
+                                </div>
+                                <div th:if="${clubAnnouncements == null or clubAnnouncements.empty}" class="text-center text-muted border rounded-3 py-4">
+                                    <i class="bi bi-megaphone fs-4 d-block mb-2"></i>
+                                    No notices have been posted yet.
+                                </div>
+                                <div th:if="${clubAnnouncements != null and !clubAnnouncements.empty}" class="d-flex flex-column gap-2">
+                                    <article th:each="notice : ${clubAnnouncements}" class="border rounded-3 p-3">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                            <div class="min-w-0">
+                                                <div class="fw-semibold text-dark" th:text="${notice.title}">Notice headline</div>
+                                                <div class="small text-muted text-break" th:text="${notice.content}">Notice content</div>
+                                                <img th:if="${notice.imageData != null}" th:src="@{/announcements/{id}/image(id=${notice.id})}"
+                                                     class="img-fluid rounded-3 mt-2" style="max-height: 150px" alt="Notice image">
+                                                <a th:if="${notice.attachmentData != null}" th:href="@{/announcements/{id}/attachment(id=${notice.id})}"
+                                                   class="btn btn-sm btn-outline-secondary rounded-3 mt-2"><i class="bi bi-file-earmark-pdf me-1"></i> View attached PDF</a>
+                                                <span class="badge mt-2"
+                                                      th:classappend="${notice.priority.name() == 'URGENT' ? ' bg-danger' : (notice.priority.name() == 'LOW' ? ' bg-secondary' : ' bg-primary')}"
+                                                      th:text="${notice.priority.displayName}">Important</span>
+                                                <span class="small text-muted ms-2" th:text="${#temporals.format(notice.createdAt, 'dd MMM yyyy')}">Date</span>
+                                            </div>
+                                            <div class="d-flex align-items-start gap-2 flex-shrink-0">
+                                                <button type="button" class="btn btn-sm btn-outline-primary rounded-3"
+                                                        data-bs-toggle="collapse" th:attr="data-bs-target='#editClubNotice-' + ${notice.id}">
+                                                    <i class="bi bi-pencil me-1"></i> Edit
+                                                </button>
+                                                <form th:action="@{/lead/announcements/{id}/delete(id=${notice.id})}" method="post"
+                                                      onsubmit="return confirm('Delete this notice? This cannot be undone.');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-3">
+                                                        <i class="bi bi-trash me-1"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="collapse mt-3" th:id="'editClubNotice-' + ${notice.id}">
+                                            <form th:action="@{/lead/announcements/{id}/edit(id=${notice.id})}" method="post" enctype="multipart/form-data" class="border-top pt-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold" th:for="'club-notice-title-' + ${notice.id}">Headline *</label>
+                                                    <input type="text" class="form-control rounded-3" name="title"
+                                                           th:id="'club-notice-title-' + ${notice.id}" th:value="${notice.title}" required maxlength="255">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label small fw-semibold" th:for="'club-notice-content-' + ${notice.id}">Content *</label>
+                                                    <textarea class="form-control rounded-3" name="content" rows="3"
+                                                              th:id="'club-notice-content-' + ${notice.id}" th:text="${notice.content}" required></textarea>
+                                                </div>
+                                                <div class="row g-2 mb-3">
+                                                    <div class="col-md-6"><label class="form-label small">Replace notice image</label><input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif"></div>
+                                                    <div class="col-md-6"><label class="form-label small">Replace PDF rules / file</label><input type="file" name="attachment" class="form-control" accept="application/pdf,.pdf"></div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="submit" class="btn btn-primary rounded-3 fw-semibold">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </article>
+                                </div>
+                            </section>
+
+                            <hr>
+                            <h6 class="fw-bold mb-3">Post a New Notice</h6>
+                            <form th:action="@{/lead/announcements/new}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="title" class="form-label small fw-semibold text-dark">Notice Headline *</label>
+                                <input type="text" class="form-control rounded-3" id="title" name="title" placeholder="e.g. Weekly Meeting Venue Changed" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label small fw-semibold text-dark">Content *</label>
+                                <textarea class="form-control rounded-3" id="contents" name="content" rows="3" placeholder="Provide full announcement details..." required></textarea>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="noticeImage" class="form-label small fw-semibold text-dark">Notice Poster / Image</label>
+                                    <input type="file" class="form-control rounded-3" id="noticeImage" name="image" accept="image/jpeg,image/png,image/webp,image/gif">
+                                    <div class="form-text">JPG, PNG, WEBP, or GIF, up to 5 MB.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="noticeAttachment" class="form-label small fw-semibold text-dark">Rules / Regulations PDF</label>
+                                    <input type="file" class="form-control rounded-3" id="noticeAttachment" name="attachment" accept="application/pdf,.pdf">
+                                    <div class="form-text">Optional PDF, up to 10 MB.</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light mx-n4 mb-n4 mt-4">
+                            <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-3 fw-bold">Publish Notice</button>
+                        </div>
+                    </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

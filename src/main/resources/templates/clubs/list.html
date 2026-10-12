@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Clubs Directory - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="mb-4 text-center">
+                <h1 class="fw-bold text-dark mb-2">Explore Student Clubs</h1>
+                <p class="text-muted max-w-600 mx-auto">Find a club that aligns with your passions, technical aspirations, and artistic talents.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-wrap gap-2">
+                            <a th:href="@{/clubs}"
+                               th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedCategory == null} ? 'btn-primary' : 'btn-outline-secondary')">
+                                All Clubs
+                            </a>
+                            <a th:each="cat : ${categories}"
+                               th:href="@{/clubs(category=${cat.name()})}"
+                               th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedCategory == cat.name()} ? 'btn-primary' : 'btn-outline-secondary')">
+                                <i th:class="'bi ' + ${cat.iconClass} + ' me-1'"></i>
+                                <span th:text="${cat.displayName}">Category</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <form th:action="@{/clubs}" method="get">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control rounded-start-pill ps-3" placeholder="Search clubs..." th:value="${searchQuery}">
+                                <button class="btn btn-primary rounded-end-pill px-3" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" th:if="${!clubs.empty}">
+                <div th:each="club : ${clubs}" class="col-md-6 col-lg-4">
+                    <div class="card h-100 hover-card overflow-hidden">
+
+                        <div class="p-4 text-white position-relative" th:style="'background: ' + (${club.bannerGradient != null} ? ${club.bannerGradient} : 'linear-gradient(135deg, #1e3a8a, #3b82f6)')">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-white text-dark shadow-sm">
+                                    <i th:class="'bi ' + ${club.category.iconClass} + ' me-1'"></i>
+                                    <span th:text="${club.category.displayName}">Category</span>
+                                </span>
+                                <span class="badge bg-success bg-opacity-75">Active</span>
+                            </div>
+                            <h4 class="fw-bold text-white mb-0" th:text="${club.name}">Club Name</h4>
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <p class="text-muted small mb-4 flex-grow-1" th:text="${club.shortTagline}">
+                                Short tagline describing club vision and goals...
+                            </p>
+
+                            <div class="border-top pt-3 mt-auto">
+                                <div class="d-flex align-items-center text-muted small mb-2">
+                                    <i class="bi bi-person-fill-gear text-primary me-2"></i>
+                                    <span th:text="${club.lead != null ? 'Lead: ' + club.lead.fullName : 'Lead: Vacant'}">Lead: Aarav</span>
+                                </div>
+                                <div class="d-flex align-items-center text-muted small mb-2">
+                                    <i class="bi bi-award text-success me-2"></i>
+                                    <span class="text-truncate" th:text="${club.facultyAdvisor != null ? club.facultyAdvisor : 'Faculty Coordinator'}">Advisor</span>
+                                </div>
+                                <div class="d-flex align-items-center text-muted small mb-3">
+                                    <i class="bi bi-clock-history text-warning me-2"></i>
+                                    <span class="text-truncate" th:text="${club.meetingSchedule != null ? club.meetingSchedule : 'Weekly Meetings'}">Schedule</span>
+                                </div>
+
+                                <a th:href="@{/clubs/{id}(id=${club.id})}" class="btn btn-outline-primary w-100 rounded-3 fw-semibold">
+                                    View Club Page <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${clubs.empty}" class="text-center py-5">
+                <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="text-dark fw-bold">No Clubs Found</h4>
+                <p class="text-muted">Try changing your search keywords or category filters.</p>
+                <a th:href="@{/clubs}" class="btn btn-outline-primary rounded-pill">Reset Filters</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>My Profile - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="user-avatar-bubble fs-3" style="width: 54px; height: 54px;">
+                                <img th:if="${user.profilePhoto != null}" class="user-avatar-photo" th:src="@{/profile-photo/{id}(id=${user.id})}" alt="Profile photo">
+                                <span th:unless="${user.profilePhoto != null}" th:text="${user.fullName != null ? #strings.substring(user.fullName,0,1) : 'U'}">U</span>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold text-dark mb-0">Student Profile</h4>
+                                <div class="text-muted small" th:text="${user.email}">user@vpmcoe.ac.in</div>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/student/profile}" method="post">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label small fw-semibold text-dark">Full Name</label>
+                                <input type="text" class="form-control rounded-3" id="fullName" name="fullName" th:value="${user.fullName}" required>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="prn" class="form-label small fw-semibold text-dark">PRN / Student ID</label>
+                                    <input type="text" class="form-control rounded-3" id="prn" name="prn" th:value="${user.prn}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label small fw-semibold text-dark">Contact Number</label>
+                                    <input type="text" class="form-control rounded-3" id="phone" name="phone" th:value="${user.phone}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="department" class="form-label small fw-semibold text-dark">Department</label>
+                                    <select class="form-select rounded-3" id="department" name="department" required>
+                                        <option value="Computer Engineering" th:selected="${user.department == 'Computer Engineering'}">Computer Engineering</option>
+                                        <option value="Information Technology" th:selected="${user.department == 'Information Technology'}">Information Technology</option>
+                                        <option value="AI & Data Science" th:selected="${user.department == 'AI & Data Science'}">AI & Data Science</option>
+                                        <option value="Electronics & Telecommunication" th:selected="${user.department == 'Electronics & Telecommunication'}">Electronics & Telecommunication</option>
+                                        <option value="Mechanical Engineering" th:selected="${user.department == 'Mechanical Engineering'}">Mechanical Engineering</option>
+                                        <option value="Civil Engineering" th:selected="${user.department == 'Civil Engineering'}">Civil Engineering</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="academicYear" class="form-label small fw-semibold text-dark">Academic Year</label>
+                                    <select class="form-select rounded-3" id="academicYear" name="academicYear" required>
+                                        <option value="First Year (FE)" th:selected="${user.academicYear == 'First Year (FE)'}">First Year (FE)</option>
+                                        <option value="Second Year (SE)" th:selected="${user.academicYear == 'Second Year (SE)'}">Second Year (SE)</option>
+                                        <option value="Third Year (TE)" th:selected="${user.academicYear == 'Third Year (TE)'}">Third Year (TE)</option>
+                                        <option value="Final Year (BE)" th:selected="${user.academicYear == 'Final Year (BE)'}">Final Year (BE)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                <a th:href="@{/student/dashboard}" class="btn btn-light rounded-3">Cancel</a>
+                                <button type="submit" class="btn btn-primary fw-bold rounded-3 px-4">
+                                    <i class="bi bi-check-circle me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mt-4">
+                        <h5 class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock me-2 text-primary"></i>Login &amp; Security</h5>
+                        <p class="small text-muted mb-4">Change your sign-in email or password. You will be asked to sign in again after a change.</p>
+                        <form th:action="@{/student/profile/account}" method="post">
+                            <div class="mb-3"><label for="accountEmail" class="form-label small fw-semibold text-dark">Email Address</label><input type="email" class="form-control rounded-3" id="accountEmail" name="email" th:value="${user.email}" required></div>
+                            <div class="mb-3"><label for="currentPassword" class="form-label small fw-semibold text-dark">Current Password</label><input type="password" class="form-control rounded-3" id="currentPassword" name="currentPassword" autocomplete="current-password" required></div>
+                            <div class="row g-3 mb-4"><div class="col-md-6"><label for="newPassword" class="form-label small fw-semibold text-dark">New Password <span class="text-muted fw-normal">(optional)</span></label><input type="password" class="form-control rounded-3" id="newPassword" name="newPassword" minlength="6" autocomplete="new-password"></div><div class="col-md-6"><label for="confirmNewPassword" class="form-label small fw-semibold text-dark">Confirm New Password</label><input type="password" class="form-control rounded-3" id="confirmNewPassword" name="confirmNewPassword" minlength="6" autocomplete="new-password"></div></div>
+                            <button type="submit" class="btn btn-outline-primary rounded-3 fw-bold"><i class="bi bi-key me-1"></i> Update Login Details</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

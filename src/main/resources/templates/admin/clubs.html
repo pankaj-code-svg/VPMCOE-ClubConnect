@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>All Clubs Management - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <a th:href="@{/admin/dashboard}" class="text-decoration-none small text-muted">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Admin Dashboard
+                    </a>
+                    <h2 class="fw-bold text-dark mb-0">College Clubs Directory</h2>
+                    <div class="text-muted small">Manage club status, details, and leadership allocations</div>
+                </div>
+                <div>
+                    <a th:href="@{/admin/clubs/new}" class="btn btn-primary rounded-3 fw-bold">
+                        <i class="bi bi-plus-circle me-1"></i> Add New Club
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Club Name</th>
+                                    <th>Category</th>
+                                    <th>Student Lead</th>
+                                    <th>Faculty Advisor</th>
+                                    <th>Venue & Schedule</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Leadership & Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${clubs}">
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${c.name}">Technology Club</div>
+                                        <div class="small text-muted text-truncate" style="max-width: 200px;" th:text="${c.shortTagline}">Tagline</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            <i th:class="'bi ' + ${c.category.iconClass} + ' me-1'"></i>
+                                            <span th:text="${c.category.displayName}">Technical</span>
+                                        </span>
+                                    </td>
+                                    <td class="small">
+                                        <div class="fw-semibold text-dark" th:text="${c.lead != null ? c.lead.fullName : 'Vacant'}">Lead Name</div>
+                                        <div class="text-muted" th:if="${c.lead != null}" th:text="${c.lead.email}">lead@vpmcoe.ac.in</div>
+                                        <div class="text-muted" th:if="${c.lead != null}" th:text="${c.lead.prn != null ? c.lead.prn : c.lead.department}">PRN / Department</div>
+                                        <div class="text-muted" th:if="${c.lead != null}" th:text="${c.lead.department} + ' · ' + ${c.lead.academicYear != null ? c.lead.academicYear : 'Year not set'}">Department · Year</div>
+                                        <div class="text-muted" th:if="${c.lead == null}">Unassigned</div>
+                                    </td>
+                                    <td class="small text-muted" th:text="${c.facultyAdvisor != null ? c.facultyAdvisor : '-'}">Faculty</td>
+                                    <td class="small">
+                                        <div th:text="${c.roomVenue != null ? c.roomVenue : '-'}">Room</div>
+                                        <div class="text-muted" th:text="${c.meetingSchedule != null ? c.meetingSchedule : '-'}">Schedule</div>
+                                    </td>
+                                    <td>
+                                        <span th:if="${c.status.name() == 'ACTIVE'}" class="badge bg-success">ACTIVE</span>
+                                        <span th:if="${c.status.name() == 'INACTIVE'}" class="badge bg-secondary">INACTIVE</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a th:href="@{/admin/clubs/{id}/edit(id=${c.id})}" class="btn btn-sm btn-outline-secondary rounded-3" title="Edit Club">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form th:action="@{/admin/clubs/{id}/toggle-status(id=${c.id})}" method="post" class="d-inline">
+                                                <button type="submit"
+                                                        th:class="'btn btn-sm rounded-3 ' + (${c.status.name() == 'ACTIVE'} ? 'btn-outline-danger' : 'btn-outline-success')"
+                                                        th:title="${c.status.name() == 'ACTIVE'} ? 'Deactivate Club' : 'Activate Club'">
+                                                    <i th:class="'bi ' + (${c.status.name() == 'ACTIVE'} ? 'bi-pause-circle' : 'bi-play-circle')"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <form th:action="@{/admin/clubs/{id}/lead(id=${c.id})}" method="post" class="d-flex justify-content-end gap-2 mt-2">
+                                            <select class="form-select form-select-sm" name="leadUserId" aria-label="Choose club leader" style="max-width: 250px;">
+                                                <option value="">Vacant</option>
+                                                <option th:each="u : ${users}"
+                                                        th:if="${u.role.name() != 'ROLE_ADMIN' and u.enabled}"
+                                                        th:value="${u.id}"
+                                                        th:selected="${c.lead != null and c.lead.id == u.id}"
+                                                        th:text="${u.fullName} + ' (' + ${u.email} + ')'">
+                                                </option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-3 text-nowrap">Update Leader</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head><title>Attendance and Scan Reports</title></head>
+<body>
+<div id="content">
+    <div class="container py-4">
+        <a th:href="@{/admin/dashboard}" class="small text-decoration-none">Back to Admin Dashboard</a>
+        <h2 class="fw-bold mt-2">Event Attendance & Scan Reports</h2>
+        <p class="text-muted">Attendance history and incidents reported by club leaders.</p>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+            <h4 class="fw-bold">Attendance Records</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead><tr><th>Event</th><th>Club</th><th>Attendee</th><th>Roll No.</th><th>Branch / Year</th><th>Event Date & Time</th><th>Attendance</th><th>Check-In Time</th></tr></thead>
+                    <tbody>
+                    <tr th:each="r : ${records}">
+                        <td th:text="${r.event.title}">Event</td>
+                        <td th:text="${r.event.club.name}">Club</td>
+                        <td th:text="${r.student.fullName}">Student</td>
+                        <td th:text="${r.student.prn}">PRN</td>
+                        <td><span th:text="${r.student.department}"></span> / <span th:text="${r.student.academicYear}"></span></td>
+                        <td th:text="${#temporals.format(r.event.eventDate, 'dd MMM yyyy, hh:mm a')}">Event date</td>
+                        <td><span th:class="${r.attended ? 'badge bg-success' : 'badge bg-secondary'}" th:text="${r.attended ? 'Present' : 'Absent'}"></span></td>
+                        <td th:text="${r.attendedAt != null ? #temporals.format(r.attendedAt, 'dd MMM yyyy, hh:mm a') : '-'}">Attendance time</td>
+                    </tr>
+                    <tr th:if="${records.empty}"><td colspan="8" class="text-center text-muted py-4">No event registrations have been recorded yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm rounded-4 p-3">
+            <h4 class="fw-bold">Automated Scan Complaints</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead><tr><th>Reported</th><th>Reported By</th><th>Scanning Club / Event</th><th>Pass Holder</th><th>Pass Event / Club</th><th>Issue</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="incident : ${incidents}">
+                        <td th:text="${#temporals.format(incident.createdAt, 'dd MMM yyyy, hh:mm a')}">Time</td>
+                        <td><span th:text="${incident.reporter.fullName}"></span><div class="small text-muted" th:text="${incident.reporter.email}"></div></td>
+                        <td><span th:text="${incident.scanningClub.name}"></span><div class="small text-muted" th:text="${incident.scanEvent.title}"></div></td>
+                        <td><span th:text="${incident.registration != null ? incident.registration.student.fullName : 'Unknown pass'}"></span><div class="small text-muted" th:text="${incident.registration != null ? incident.registration.student.prn : incident.ticketNumber}"></div></td>
+                        <td><span th:text="${incident.registration != null ? incident.registration.event.title : 'Unmatched'}"></span><div class="small text-muted" th:text="${incident.registration != null ? incident.registration.event.club.name : ''}"></div></td>
+                        <td><span class="badge bg-danger" th:text="${incident.incidentType}"></span><div class="small text-muted" th:text="${incident.details}"></div></td>
+                        <td><span th:class="${incident.resolved ? 'badge bg-success' : 'badge bg-warning text-dark'}" th:text="${incident.resolved ? 'Reviewed' : 'Open'}"></span></td>
+                        <td><form th:if="${!incident.resolved}" th:action="@{/admin/attendance/incidents/{id}/resolve(id=${incident.id})}" method="post"><button class="btn btn-sm btn-outline-success" type="submit">Mark Reviewed</button></form></td>
+                    </tr>
+                    <tr th:if="${incidents.empty}"><td colspan="8" class="text-center text-muted py-4">There are no scan complaints.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

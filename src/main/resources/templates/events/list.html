@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Events & Workshops - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="mb-4 text-center">
+                <h1 class="fw-bold text-dark mb-2">Campus Events & Workshops</h1>
+                <p class="text-muted max-w-600 mx-auto">Participate in hackathons, sports tournaments, technical seminars, and cultural auditions.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="small fw-semibold text-muted me-1">Filter by Club:</span>
+                            <a th:href="@{/events}"
+                               th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedClub == null} ? 'btn-primary' : 'btn-outline-secondary')">
+                                All Clubs
+                            </a>
+                            <a th:each="c : ${allClubs}"
+                               th:href="@{/events(clubId=${c.id})}"
+                               th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedClub != null and selectedClub.id == c.id} ? 'btn-primary' : 'btn-outline-secondary')"
+                               th:text="${c.name}">
+                                Club Name
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <form th:action="@{/events}" method="get">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control rounded-start-pill ps-3" placeholder="Search events..." th:value="${searchQuery}">
+                                <button class="btn btn-primary rounded-end-pill px-3" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" th:if="${!events.empty}">
+                <div th:each="event : ${events}" class="col-md-6 col-lg-4">
+                    <div class="card h-100 hover-card overflow-hidden">
+                        <img th:if="${event.posterImageData != null}" th:src="@{/events/{id}/poster(id=${event.id})}"
+                             class="card-img-top" style="max-height: 220px; object-fit: cover" alt="Event poster">
+                        <img th:if="${event.posterImageData == null and event.bannerImage != null and !event.bannerImage.isEmpty()}"
+                             th:src="${event.bannerImage}" class="card-img-top" style="max-height: 220px; object-fit: cover" alt="Event poster">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary-subtle text-primary border" th:text="${event.club.name}">Tech Club</span>
+                                <span class="badge bg-light text-dark border" th:text="${event.mode}">OFFLINE</span>
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-2" th:text="${event.title}">Event Title</h5>
+                            <p class="text-muted small mb-3 flex-grow-1" th:text="${event.description}">Event description snippet...</p>
+
+                            <div class="bg-light p-3 rounded-3 mb-3 small">
+                                <div class="text-dark fw-semibold mb-1">
+                                    <i class="bi bi-calendar-check text-primary me-2"></i>
+                                    <span th:text="${#temporals.format(event.eventDate, 'EEE, dd MMM yyyy - hh:mm a')}">Date</span>
+                                </div>
+                                <div class="text-muted">
+                                    <i class="bi bi-geo-alt text-danger me-2"></i>
+                                    <span th:text="${event.venue}">Venue</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                                <span class="small text-muted">
+                                    <i class="bi bi-people me-1"></i> Max: <span th:text="${event.maxCapacity}">100</span>
+                                </span>
+                                <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-sm btn-primary rounded-3 fw-semibold px-3">
+                                    View & Pass <i class="bi bi-ticket-perforated ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${events.empty}" class="text-center py-5">
+                <i class="bi bi-calendar-x fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="text-dark fw-bold">No Events Found</h4>
+                <p class="text-muted">No scheduled events match your selected criteria.</p>
+                <a th:href="@{/events}" class="btn btn-outline-primary rounded-pill">Reset Filter</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

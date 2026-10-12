@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Event Form - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <div class="mb-4">
+                            <a th:href="@{/lead/events}" class="text-decoration-none small text-muted">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Events
+                            </a>
+                            <h3 class="fw-bold text-dark mt-2 mb-1" th:text="${event.id != null ? 'Edit Event' : 'Create New Event'}">Create New Event</h3>
+                            <div class="text-muted small">Host an activity for <span class="fw-semibold text-primary" th:text="${club.name}">Technology Club</span></div>
+                        </div>
+
+                        <form th:action="${event.id != null} ? @{/lead/events/{id}/edit(id=${event.id})} : @{/lead/events/new}"
+                              th:object="${event}" method="post" enctype="multipart/form-data">
+
+                            <div class="mb-3">
+                                <label for="title" class="form-label small fw-semibold text-dark">Event Title *</label>
+                                <input type="text" class="form-control rounded-3" id="title" th:field="*{title}" placeholder="e.g. HackVPM 2026: 24-Hour Hackathon" required>
+                                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label small fw-semibold text-dark">Description & Agenda *</label>
+                                <textarea class="form-control rounded-3" id="description" th:field="*{description}" rows="4" placeholder="Detail event schedule, guidelines, prerequisites, eligibility..." required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="poster" class="form-label small fw-semibold text-dark">Event Poster / Image</label>
+                                <input type="file" class="form-control rounded-3" id="poster" name="poster" accept="image/jpeg,image/png,image/webp,image/gif">
+                                <div class="form-text">Optional JPG, PNG, WEBP, or GIF, up to 5 MB. Documents are not accepted for events.</div>
+                                <img th:if="${event.posterImageData != null}" th:src="@{/events/{id}/poster(id=${event.id})}" class="img-fluid rounded-3 mt-2" style="max-height: 220px" alt="Current event poster">
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="eventDate" class="form-label small fw-semibold text-dark">Event Start Date & Time *</label>
+                                    <input type="datetime-local" class="form-control rounded-3" id="eventDate" th:field="*{eventDate}" required>
+                                    <div th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}" class="text-danger small mt-1"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label small fw-semibold text-dark">Event End Date & Time</label>
+                                    <input type="datetime-local" class="form-control rounded-3" id="endDate" th:field="*{endDate}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="venue" class="form-label small fw-semibold text-dark">Venue / Hall / Lab *</label>
+                                    <input type="text" class="form-control rounded-3" id="venue" th:field="*{venue}" placeholder="e.g. Lab 304, IT Building" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="mode" class="form-label small fw-semibold text-dark">Event Mode *</label>
+                                    <select class="form-select rounded-3" id="mode" th:field="*{mode}" required>
+                                        <option th:each="m : ${modes}" th:value="${m}" th:text="${m.displayName}">OFFLINE</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="onlineLink" class="form-label small fw-semibold text-dark">Online Meeting Link (if Virtual or Hybrid)</label>
+                                <input type="url" class="form-control rounded-3" id="onlineLink" th:field="*{onlineLink}" placeholder="https://meet.google.com/xyz">
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="maxCapacity" class="form-label small fw-semibold text-dark">Seating / Participant Capacity *</label>
+                                    <input type="number" class="form-control rounded-3" id="maxCapacity" th:field="*{maxCapacity}" min="1" max="1000" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="registrationDeadline" class="form-label small fw-semibold text-dark">Registration Cutoff Deadline</label>
+                                    <input type="datetime-local" class="form-control rounded-3" id="registrationDeadline" th:field="*{registrationDeadline}">
+                                </div>
+                            </div>
+
+                            <div class="mb-4" th:if="${statuses != null}">
+                                <label for="status" class="form-label small fw-semibold text-dark">Event Lifecycle Status</label>
+                                <select class="form-select rounded-3" id="status" th:field="*{status}">
+                                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.displayName}">UPCOMING</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <a th:href="@{/lead/events}" class="btn btn-light rounded-3">Cancel</a>
+                                <button type="submit" class="btn btn-primary fw-bold rounded-3 px-4">
+                                    <i class="bi bi-cloud-arrow-up me-1"></i>
+                                    <span th:text="${event.id != null ? 'Update Event' : 'Publish Event'}">Save Event</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

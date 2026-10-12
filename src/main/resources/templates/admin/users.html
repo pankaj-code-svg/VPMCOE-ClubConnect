@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Users Directory - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <a th:href="@{/admin/dashboard}" class="text-decoration-none small text-muted">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Admin Dashboard
+                    </a>
+                    <h2 class="fw-bold text-dark mb-0">Users & Roles Directory</h2>
+                    <div class="text-muted small">Manage student, club lead, and administrative accounts</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/admin/users}"
+                       th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedRole == null} ? 'btn-primary' : 'btn-outline-secondary')">
+                        All Users
+                    </a>
+                    <a th:each="r : ${roles}"
+                       th:href="@{/admin/users(role=${r.name()})}"
+                       th:class="'btn btn-sm rounded-pill px-3 ' + (${selectedRole == r.name()} ? 'btn-primary' : 'btn-outline-secondary')"
+                       th:text="${r.name()}">
+                        ROLE
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>User Profile</th>
+                                    <th>PRN / ID</th>
+                                    <th>Department & Year</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u : ${users}">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="user-avatar-bubble small" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                <span th:text="${u.fullName != null ? #strings.substring(u.fullName,0,1) : 'U'}">U</span>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark" th:text="${u.fullName}">Full Name</div>
+                                                <div class="small text-muted" th:text="${u.email}">email@vpmcoe.ac.in</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="small font-monospace" th:text="${u.prn != null ? u.prn : '-'}">PRN</td>
+                                    <td class="small">
+                                        <div th:text="${u.department != null ? u.department : '-'}">Department</div>
+                                        <div class="text-muted" th:text="${u.academicYear != null ? u.academicYear : '-'}">Year</div>
+                                    </td>
+                                    <td>
+                                        <span th:class="${u.role.name() == 'ROLE_ADMIN'} ? 'badge bg-danger' : (${u.role.isClubLead()} ? 'badge bg-primary' : 'badge bg-success')"
+                                              th:text="${u.role.name()}">ROLE</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${u.enabled}" class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                        <span th:if="${!u.enabled}" class="badge bg-danger-subtle text-danger border border-danger-subtle">Disabled</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end align-items-center gap-2">
+
+                                            <form th:if="${!u.role.isClubLead()}" th:action="@{/admin/users/{id}/change-role(id=${u.id})}" method="post" class="d-inline">
+                                                <select name="role" class="form-select form-select-sm d-inline-block rounded-3" style="width: auto;" onchange="this.form.submit()">
+                                                    <option th:each="r : ${roleOptions}"
+                                                            th:value="${r}"
+                                                            th:selected="${u.role == r}"
+                                                            th:text="${r.name()}">
+                                                        ROLE
+                                                    </option>
+                                                </select>
+                                            </form>
+                                            <a th:if="${u.role.isClubLead()}" th:href="@{/admin/clubs}" class="btn btn-sm btn-outline-primary rounded-3">Manage Club Lead</a>
+
+                                            <form th:action="@{/admin/users/{id}/toggle-status(id=${u.id})}" method="post" class="d-inline">
+                                                <button type="submit"
+                                                        th:class="'btn btn-sm rounded-3 ' + (${u.enabled} ? 'btn-outline-danger' : 'btn-outline-success')"
+                                                        th:title="${u.enabled} ? 'Disable Account' : 'Enable Account'">
+                                                    <i th:class="'bi ' + (${u.enabled} ? 'bi-lock' : 'bi-unlock')"></i>
+                                                </button>
+                                            </form>
+                                            <form th:if="${u.id != currentUserId}"
+                                                  th:action="@{/admin/users/{id}/delete(id=${u.id})}"
+                                                  method="post" class="d-inline"
+                                                  onsubmit="return confirm('Permanently remove this user and their account records? They can register again later with the same email.');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-3" title="Permanently remove user">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

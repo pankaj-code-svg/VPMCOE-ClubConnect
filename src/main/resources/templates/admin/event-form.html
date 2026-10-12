@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head><title>Create Public Event</title></head>
+<body>
+<div id="content">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                    <h2 class="fw-bold mb-1">Create Public Event</h2>
+                    <p class="text-muted">Campus events published by an administrator are visible to everyone.</p>
+                    <form th:action="@{/admin/events/new}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3"><label class="form-label">Event title</label><input class="form-control" name="title" required></div>
+                        <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="4" required></textarea></div>
+                        <div class="mb-3"><label class="form-label">Organizing club</label><select class="form-select" name="clubId" required><option value="" disabled selected>Select a club</option><option th:each="club : ${clubs}" th:value="${club.id}" th:text="${club.name}"></option></select></div>
+                        <div class="mb-3"><label class="form-label">Event poster</label><input class="form-control" type="file" name="poster" accept="image/jpeg,image/png,image/webp,image/gif"></div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6"><label class="form-label">Start date and time</label><input class="form-control" type="datetime-local" name="eventDate" required></div>
+                            <div class="col-md-6"><label class="form-label">End date and time</label><input class="form-control" type="datetime-local" name="endDate"></div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6"><label class="form-label">Venue</label><input class="form-control" name="venue" required></div>
+                            <div class="col-md-6"><label class="form-label">Mode</label><select class="form-select" name="mode" required><option th:each="mode : ${modes}" th:value="${mode}" th:text="${mode.displayName}"></option></select></div>
+                        </div>
+                        <div class="mb-3"><label class="form-label">Online meeting link</label><input class="form-control" type="url" name="onlineLink"></div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6"><label class="form-label">Registration deadline</label><input class="form-control" type="datetime-local" name="registrationDeadline"></div>
+                            <div class="col-md-6"><label class="form-label">Capacity</label><input class="form-control" type="number" name="maxCapacity" min="1" max="1000" value="100" required></div>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-3"><a class="btn btn-light" th:href="@{/admin/dashboard}">Cancel</a><button class="btn btn-primary fw-bold" type="submit">Publish Public Event</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

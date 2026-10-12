@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Attendee Roster - VPMCOE ClubConnect</title>
+</head>
+<body>
+    <div id="content">
+        <div class="container py-4">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <a th:href="@{/lead/events}" class="text-decoration-none small text-muted">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Events
+                    </a>
+                    <h2 class="fw-bold text-dark mb-0">Attendee Roster & Attendance</h2>
+                    <div class="text-muted small">
+                        Event: <span class="fw-semibold text-primary" th:text="${event.title}">HackVPM 2026</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a th:href="@{/lead/events/{id}/scanner(id=${event.id})}" class="btn btn-success rounded-3 btn-sm">
+                        <i class="bi bi-qr-code-scan me-1"></i> Scan Entry Pass
+                    </a>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6">
+                        <i class="bi bi-person-check-fill me-1"></i>
+                        <span th:text="${attendedCount}">0</span> / <span th:text="${registrations.size()}">0</span> Present
+                    </span>
+                    <button class="btn btn-outline-secondary rounded-3 btn-sm" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Print Roster
+                    </button>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-body p-0">
+                    <div th:if="${!registrations.empty}" class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ticket #</th>
+                                    <th>Student Name</th>
+                                    <th>PRN</th>
+                                    <th>Department & Year</th>
+                                    <th>Registered At</th>
+                                    <th>Attendance</th>
+                                    <th class="text-end no-print">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r : ${registrations}">
+                                    <td>
+                                        <span class="badge bg-light text-dark border font-monospace" th:text="${r.ticketNumber}">VPM-01</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${r.student.fullName}">Student Name</div>
+                                        <div class="small text-muted" th:text="${r.student.email}">email@vpmcoe.ac.in</div>
+                                    </td>
+                                    <td class="small font-monospace" th:text="${r.student.prn}">PRN</td>
+                                    <td class="small">
+                                        <div th:text="${r.student.department}">Department</div>
+                                        <div class="text-muted" th:text="${r.student.academicYear}">Year</div>
+                                    </td>
+                                    <td class="small text-muted" th:text="${#temporals.format(r.registeredAt, 'dd MMM yyyy, hh:mm a')}">Timestamp</td>
+                                    <td>
+                                        <span th:if="${r.attended}" class="badge bg-success">
+                                            <i class="bi bi-check2-circle me-1"></i> Present
+                                        </span>
+                                        <span th:if="${!r.attended}" class="badge bg-secondary-subtle text-secondary border">
+                                            Absent
+                                        </span>
+                                    </td>
+                                    <td class="text-end no-print">
+                                        <form th:action="@{/lead/events/{eventId}/attendees/{regId}/toggle(eventId=${event.id}, regId=${r.id})}" method="post" class="d-inline">
+                                            <button type="submit"
+                                                    th:class="'btn btn-sm rounded-3 ' + (${r.attended} ? 'btn-outline-danger' : 'btn-outline-success')">
+                                                <i th:class="'bi ' + (${r.attended} ? 'bi-x-circle me-1' : 'bi-check-circle me-1')"></i>
+                                                <span th:text="${r.attended} ? 'Mark Absent' : 'Mark Present'">Mark</span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div th:if="${registrations.empty}" class="text-center py-5 text-muted">
+                        <i class="bi bi-ticket-perforated fs-1 d-block mb-2 text-muted"></i>
+                        <h5 class="fw-bold text-dark">No Students Registered Yet</h5>
+                        <p class="small mb-0">Students will appear here once they claim tickets for this event.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

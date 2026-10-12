@@ -71,6 +71,32 @@ The default database setting is MySQL. H2 is included as a runtime dependency fo
 
 `H2ToMySqlMigrator` clears the matching tables in its destination MySQL database before copying data. Use it only with a disposable or backed-up destination.
 
+## Deploy to Railway
+
+The repository includes a Dockerfile that builds and runs the Spring Boot application on Java 21. Railway's Hobby plan currently costs $5/month and includes $5 of monthly usage; usage above that amount is billed separately. A public deployment also needs a persistent MySQL service, so check Railway's current pricing before enabling billing.
+
+1. Create a Railway project from this GitHub repository and deploy the application using the included Dockerfile.
+2. Add a MySQL service to the same Railway project.
+3. In the application service, add these private variables. Use Railway's variable picker to reference the values from the MySQL service:
+
+   ```text
+   SPRING_PROFILES_ACTIVE=prod
+   MYSQL_HOST=${{MySQL.MYSQLHOST}}
+   MYSQL_PORT=${{MySQL.MYSQLPORT}}
+   MYSQL_DATABASE=${{MySQL.MYSQLDATABASE}}
+   MYSQL_USERNAME=${{MySQL.MYSQLUSER}}
+   MYSQL_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+   BOOTSTRAP_ADMIN_ENABLED=true
+   BOOTSTRAP_ADMIN_NAME=Your name
+   BOOTSTRAP_ADMIN_EMAIL=your-admin-email@example.com
+   BOOTSTRAP_ADMIN_PASSWORD=use-a-unique-password-at-least-12-characters
+   ```
+
+   Set the admin password privately in Railway; never commit it. The production profile disables demo accounts and creates the initial administrator from these variables. Once the first admin exists, changing the bootstrap variables does not reset that account's password.
+4. Deploy the application. In Railway's application service settings, generate a public domain under **Networking**. That HTTPS domain is the URL to share.
+
+Railway's free plan has only $1 of monthly credit, which may not keep both the app and MySQL running continuously. The Hobby plan is paid. Review the [Railway plan and usage details](https://docs.railway.com/pricing/plans) before deploying. Uploaded files are stored on the app's local filesystem by the current application, so they are not durable across redeploys unless a persistent storage strategy is added.
+
 ## Project layout
 
 ```text

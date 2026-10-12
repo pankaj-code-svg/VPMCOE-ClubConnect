@@ -85,6 +85,17 @@ The demo starts with synthetic sample content and publicly documented demo accou
 
 If Render asks you to add a payment method or select a paid plan, stop rather than confirm; the demo configuration is intended to run on the Free plan. See [Render's free-service limits](https://render.com/docs/free).
 
+### Email on Render Free
+
+Render Free web services block outbound SMTP traffic on ports 25, 465, and 587. The demo therefore uses an HTTPS email API provider instead of SMTP. To enable email through Resend, set these service environment variables in the Render Dashboard (never commit the API key):
+
+- `MAIL_ENABLED=true`
+- `MAIL_PROVIDER=resend`
+- `RESEND_API_KEY` to your Resend API key
+- `MAIL_FROM` to the sender address Resend allows for your account
+
+Resend's `onboarding@resend.dev` sender is for testing. For normal delivery to students, configure and verify a sending domain you control with your email provider. Demo accounts use `.invalid` email addresses and cannot receive messages; use a real recipient only after configuring a verified sender. See [Render Free limitations](https://render.com/docs/free) and [Resend pricing](https://resend.com/pricing).
+
 ## Project layout
 
 ```text

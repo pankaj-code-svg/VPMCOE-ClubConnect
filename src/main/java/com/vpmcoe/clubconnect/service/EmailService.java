@@ -10,9 +10,21 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 public class EmailService {
@@ -25,19 +37,32 @@ public class EmailService {
     private final boolean enabled;
     private final String from;
     private final String fromName;
+    private final String provider;
+    private final String apiKey;
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
 
     public EmailService(JavaMailSender mailSender,
                         EmailNotificationLogRepository notificationLogRepository,
                         EventPassPdfService eventPassPdfService,
                         @Value("${clubconnect.mail.enabled:false}") boolean enabled,
                         @Value("${clubconnect.mail.from}") String from,
-                        @Value("${clubconnect.mail.from-name:ClubConnect}") String fromName) {
+                        @Value("${clubconnect.mail.from-name:ClubConnect}") String fromName,
+                        @Value("${clubconnect.mail.provider:smtp}") String provider,
+                        @Value("${clubconnect.mail.api-key:}") String apiKey,
+                        ObjectMapper objectMapper) {
         this.mailSender = mailSender;
         this.notificationLogRepository = notificationLogRepository;
         this.eventPassPdfService = eventPassPdfService;
         this.enabled = enabled;
         this.from = from;
         this.fromName = fromName;
+        this.provider = provider.trim().toLowerCase(Locale.ROOT);
+        this.apiKey = apiKey;
+        this.objectMapper = objectMapper;
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
     }
 
     @Async
@@ -132,23 +157,84 @@ public class EmailService {
                            String subject, String message, byte[] attachment, String attachmentName) {
         if (!enabled || user.getEmail() == null || user.getEmail().isBlank()) return;
         try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, attachment != null,
-                    StandardCharsets.UTF_8.name());
-            helper.setFrom(from, fromName);
-            helper.setTo(user.getEmail());
-            helper.setSubject(subject);
-            helper.setText(html(user.getFullName(), message), true);
-            if (attachment != null) {
-                helper.addAttachment(attachmentName, new ByteArrayResource(attachment));
-            }
-            mailSender.send(mimeMessage);
+            sendEmail(user, subject, message, attachment, attachmentName);
             notificationLogRepository.save(new EmailNotificationLog(user, event, announcement, type,
                     NotificationStatus.SENT, null));
         } catch (Exception ex) {
             notificationLogRepository.save(new EmailNotificationLog(user, event, announcement, type,
-                    NotificationStatus.FAILED, "Delivery could not be completed."));
+                    NotificationStatus.FAILED, safeFailureReason(ex)));
         }
+    }
+
+    private void sendEmail(User user, String subject, String message,
+                           byte[] attachment, String attachmentName) throws Exception {
+        String body = html(user.getFullName(), message);
+        if ("resend".equals(provider)) {
+            sendWithResend(user.getEmail(), subject, body, attachment, attachmentName);
+            return;
+        }
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, attachment != null,
+                StandardCharsets.UTF_8.name());
+        helper.setFrom(from, fromName);
+        helper.setTo(user.getEmail());
+        helper.setSubject(subject);
+        helper.setText(body, true);
+        if (attachment != null) {
+            helper.addAttachment(attachmentName, new ByteArrayResource(attachment));
+        }
+        mailSender.send(mimeMessage);
+    }
+
+    private void sendWithResend(String recipient, String subject, String body,
+                                byte[] attachment, String attachmentName) throws IOException, InterruptedException {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException("RESEND_API_KEY is not configured.");
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("from", formatFrom());
+        payload.put("to", List.of(recipient));
+        payload.put("subject", subject);
+        payload.put("html", body);
+        if (attachment != null) {
+            payload.put("attachments", List.of(Map.of(
+                    "filename", attachmentName,
+                    "content", Base64.getEncoder().encodeToString(attachment)
+            )));
+        }
+
+        HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.resend.com/emails"))
+                .timeout(Duration.ofSeconds(20))
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload),
+                        StandardCharsets.UTF_8))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IOException("Resend API returned HTTP " + response.statusCode() + ".");
+        }
+    }
+
+    private String formatFrom() {
+        if (from.contains("<")) return from;
+        return fromName + " <" + from + ">";
+    }
+
+    private String safeFailureReason(Exception exception) {
+        if (exception instanceof IOException && exception.getMessage() != null
+                && exception.getMessage().startsWith("Resend API returned HTTP ")) {
+            return exception.getMessage();
+        }
+        if (exception instanceof IllegalStateException && exception.getMessage() != null
+                && exception.getMessage().equals("RESEND_API_KEY is not configured.")) {
+            return exception.getMessage();
+        }
+        return "Delivery could not be completed.";
     }
 
     private String eventDetails(Event event) {
@@ -160,13 +246,7 @@ public class EmailService {
     private void deliverWithoutAudit(User user, String subject, String message) {
         if (!enabled || user.getEmail() == null || user.getEmail().isBlank()) return;
         try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, StandardCharsets.UTF_8.name());
-            helper.setFrom(from, fromName);
-            helper.setTo(user.getEmail());
-            helper.setSubject(subject);
-            helper.setText(html(user.getFullName(), message), true);
-            mailSender.send(mimeMessage);
+            sendEmail(user, subject, message, null, null);
         } catch (Exception ignored) {
         }
     }

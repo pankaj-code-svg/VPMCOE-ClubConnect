@@ -1,5 +1,7 @@
 # ClubConnect
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/pankaj-code-svg/VPMCOE-ClubConnect)
+
 ClubConnect is a Spring Boot web application for managing college clubs, memberships, events, and campus announcements. It includes separate dashboards for students, club leads, and administrators.
 
 ## Features
@@ -49,7 +51,7 @@ ClubConnect is a Spring Boot web application for managing college clubs, members
 
 4. Open [http://localhost:8080](http://localhost:8080).
 
-The first local run seeds demonstration accounts and sample content. Those credentials are for local demonstration only. Do not expose a seeded instance to the public internet. For a production deployment, disable seed data and provision an administrator through a secure process. Before publishing this repository publicly, verify that all sample names and contact details in the seed data are fictional or replace them with synthetic values.
+The first local run seeds demonstration accounts and sample content. The seeded names, emails, and phone numbers are synthetic. Demo passwords are intentionally simple and must never be used for a production database.
 
 Email is disabled by default. Set the `MAIL_*` values and `MAIL_ENABLED=true` in your local `.env` only if you want to configure a mail provider.
 
@@ -71,31 +73,17 @@ The default database setting is MySQL. H2 is included as a runtime dependency fo
 
 `H2ToMySqlMigrator` clears the matching tables in its destination MySQL database before copying data. Use it only with a disposable or backed-up destination.
 
-## Deploy to Railway
+## Free public demo on Render
 
-The repository includes a Dockerfile that builds and runs the Spring Boot application on Java 21. Railway's Hobby plan currently costs $5/month and includes $5 of monthly usage; usage above that amount is billed separately. A public deployment also needs a persistent MySQL service, so check Railway's current pricing before enabling billing.
+GitHub stores this repository, but GitHub Pages only serves static files and cannot run this Spring Boot server. For a free hosted demo, this repository includes a Render Blueprint and a `demo` profile that uses an in-memory H2 database instead of a paid MySQL service.
 
-1. Create a Railway project from this GitHub repository and deploy the application using the included Dockerfile.
-2. Add a MySQL service to the same Railway project.
-3. In the application service, add these private variables. Use Railway's variable picker to reference the values from the MySQL service:
+1. Open the **Deploy to Render** button above and sign in to Render if prompted.
+2. Review the `clubconnect-demo` service and make sure its plan is **Free**, then apply the `render.yaml` configuration.
+3. Wait for the first build to finish. Render will show the public `onrender.com` URL on the service page.
 
-   ```text
-   SPRING_PROFILES_ACTIVE=prod
-   MYSQL_HOST=${{MySQL.MYSQLHOST}}
-   MYSQL_PORT=${{MySQL.MYSQLPORT}}
-   MYSQL_DATABASE=${{MySQL.MYSQLDATABASE}}
-   MYSQL_USERNAME=${{MySQL.MYSQLUSER}}
-   MYSQL_PASSWORD=${{MySQL.MYSQLPASSWORD}}
-   BOOTSTRAP_ADMIN_ENABLED=true
-   BOOTSTRAP_ADMIN_NAME=Your name
-   BOOTSTRAP_ADMIN_EMAIL=your-admin-email@example.com
-   BOOTSTRAP_ADMIN_PASSWORD=use-a-unique-password-at-least-12-characters
-   ```
+The demo starts with synthetic sample content and publicly documented demo accounts (`admin@example.invalid` / `admin123`, `techlead@example.invalid` / `tech123`, and `student@example.invalid` / `student123`). Anyone can change the demo data; it resets when the service restarts or sleeps. On Render Free, an idle app sleeps after 15 minutes and the first request after that can take about a minute to wake. The free service has no persistent disk, so do not use this setup for real accounts or real data. You do not need a paid MySQL database for this demo.
 
-   Set the admin password privately in Railway; never commit it. The production profile disables demo accounts and creates the initial administrator from these variables. Once the first admin exists, changing the bootstrap variables does not reset that account's password.
-4. Deploy the application. In Railway's application service settings, generate a public domain under **Networking**. That HTTPS domain is the URL to share.
-
-Railway's free plan has only $1 of monthly credit, which may not keep both the app and MySQL running continuously. The Hobby plan is paid. Review the [Railway plan and usage details](https://docs.railway.com/pricing/plans) before deploying. Uploaded files are stored on the app's local filesystem by the current application, so they are not durable across redeploys unless a persistent storage strategy is added.
+If Render asks you to add a payment method or select a paid plan, stop rather than confirm; the demo configuration is intended to run on the Free plan. See [Render's free-service limits](https://render.com/docs/free).
 
 ## Project layout
 

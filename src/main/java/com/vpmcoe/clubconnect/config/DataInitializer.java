@@ -73,97 +73,97 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         User admin = new User(
-                "Dr. S. K. Kulkarni",
-                "admin@vpmcoe.ac.in",
+                "Demo Administrator",
+                "admin@example.invalid",
                 passwordEncoder.encode("admin123"),
-                "FAC-ADM-01",
-                "Dean Student Affairs",
+                "DEMO-ADMIN-01",
+                "Student Affairs",
                 "Faculty",
-                "+91 98220 11223",
+                "+91 90000 00001",
                 Role.ROLE_ADMIN
         );
         userRepository.save(admin);
 
         User techLead = new User(
-                "Aarav Deshmukh",
-                "techlead@vpmcoe.ac.in",
+                "Demo Tech Lead",
+                "techlead@example.invalid",
                 passwordEncoder.encode("tech123"),
-                "PRN2024COMP045",
+                "DEMO-TECH-01",
                 "Computer Engineering",
                 "Third Year (TE)",
-                "+91 98901 23456",
+                "+91 90000 00002",
                 Role.ROLE_TECH_CLUB_LEAD
         );
         userRepository.save(techLead);
 
         User cultLead = new User(
-                "Sneha Patil",
-                "cultlead@vpmcoe.ac.in",
+                "Demo Cultural Lead",
+                "cultural-lead@example.invalid",
                 passwordEncoder.encode("cult123"),
-                "PRN2024AIDS019",
+                "DEMO-CULT-01",
                 "AI & Data Science",
                 "Third Year (TE)",
-                "+91 97654 32109",
+                "+91 90000 00003",
                 Role.ROLE_CULT_CLUB_LEAD
         );
         userRepository.save(cultLead);
 
         User sportsLead = new User(
-                "Vikram Joshi",
-                "sportslead@vpmcoe.ac.in",
+                "Demo Sports Lead",
+                "sports-lead@example.invalid",
                 passwordEncoder.encode("sports123"),
-                "PRN2023MECH088",
+                "DEMO-SPORT-01",
                 "Mechanical Engineering",
                 "Final Year (BE)",
-                "+91 94231 45678",
+                "+91 90000 00004",
                 Role.ROLE_SPORTS_CLUB_LEAD
         );
         userRepository.save(sportsLead);
 
         User researchLead = new User(
-                "Dr. Pooja Shinde",
-                "researchlead@vpmcoe.ac.in",
+                "Demo Research Lead",
+                "research-lead@example.invalid",
                 passwordEncoder.encode("research123"),
-                "FAC-RES-07",
+                "DEMO-RES-01",
                 "Information Technology",
                 "Faculty",
-                "+91 98233 77889",
+                "+91 90000 00005",
                 Role.ROLE_RESEARCH_CLUB_LEAD
         );
         userRepository.save(researchLead);
 
         User student1 = new User(
-                "Rohan Kadam",
-                "student@vpmcoe.ac.in",
+                "Demo Student One",
+                "student@example.invalid",
                 passwordEncoder.encode("student123"),
-                "PRN2025IT034",
+                "DEMO-STUDENT-01",
                 "Information Technology",
                 "Second Year (SE)",
-                "+91 91580 12345",
+                "+91 90000 00006",
                 Role.ROLE_STUDENT
         );
         userRepository.save(student1);
 
         User student2 = new User(
-                "Ananya More",
-                "ananya.more@vpmcoe.ac.in",
+                "Demo Student Two",
+                "student2@example.invalid",
                 passwordEncoder.encode("student123"),
-                "PRN2024COMP012",
+                "DEMO-STUDENT-02",
                 "Computer Engineering",
                 "Third Year (TE)",
-                "+91 98811 54321",
+                "+91 90000 00007",
                 Role.ROLE_STUDENT
         );
         userRepository.save(student2);
 
         User student3 = new User(
-                "Kartik Patel",
-                "kartik.patel@vpmcoe.ac.in",
+                "Demo Student Three",
+                "student3@example.invalid",
                 passwordEncoder.encode("student123"),
-                "PRN2026ENTC099",
+                "DEMO-STUDENT-03",
                 "Electronics & Telecommunication",
                 "First Year (FE)",
-                "+91 96041 98765",
+                "+91 90000 00008",
                 Role.ROLE_STUDENT
         );
         userRepository.save(student3);
@@ -174,10 +174,10 @@ public class DataInitializer implements CommandLineRunner {
                 "Innovating the future with code, algorithms, and cutting-edge engineering.",
                 "The Technology Club of VPMCOE is the epicenter of software development, artificial intelligence, competitive programming, and robotics on campus. We bridge the gap between academic theory and real-world tech through hackathons, open-source projects, and collaborative peer learning.",
                 techLead,
-                "Prof. S. R. Jagtap (Computer Dept)",
+                "Faculty Coordinator",
                 "Central Computing Lab 4, IT Complex",
                 "Every Wednesday at 4:30 PM",
-                "techclub@vpmcoe.ac.in",
+                "tech-club@example.invalid",
                 "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)"
         );
         clubRepository.save(techClub);
@@ -188,10 +188,10 @@ public class DataInitializer implements CommandLineRunner {
                 "Celebrating artistic expressions, theater, rhythm, and vibrant campus life.",
                 "Cultural Club brings color, excitement, and harmony to VPMCOE.",
                 cultLead,
-                "Prof. N. V. Gaikwad",
+                "Faculty Coordinator",
                 "College Main Auditorium & Amphitheatre",
                 "Every Friday at 5:00 PM",
-                "cultural@vpmcoe.ac.in",
+                "cultural-club@example.invalid",
                 "linear-gradient(135deg, #eb3349 0%, #f45c43 100%)"
         );
         clubRepository.save(cultClub);
@@ -202,10 +202,10 @@ public class DataInitializer implements CommandLineRunner {
                 "Fostering athletic resilience, teamwork, and championship sportsmanship.",
                 "VPMCOE Sports Club drives collegiate sports excellence in Cricket, Football, Basketball, Badminton, Chess, and Track & Field.",
                 sportsLead,
-                "Dr. R. M. Bhosale",
+                "Faculty Coordinator",
                 "Gymkhana Complex & Sports Grounds",
                 "Daily Morning 6:00 AM & Evening 5:00 PM",
-                "sports@vpmcoe.ac.in",
+                "sports-club@example.invalid",
                 "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)"
         );
         clubRepository.save(sportsClub);
@@ -216,10 +216,10 @@ public class DataInitializer implements CommandLineRunner {
                 "Empowering inquisitive minds into published researchers and patent inventors.",
                 "The Research & Innovation Club is dedicated to mentoring undergraduate students in writing peer-reviewed research papers.",
                 researchLead,
-                "Dr. V. B. Jadhav",
+                "Faculty Coordinator",
                 "R&D Incubation Center, Room 201",
                 "Every Alternate Saturday at 11:00 AM",
-                "research@vpmcoe.ac.in",
+                "research-club@example.invalid",
                 "linear-gradient(135deg, #8a2387 0%, #e94057 50%, #f27121 100%)"
         );
         clubRepository.save(researchClub);
@@ -230,10 +230,10 @@ public class DataInitializer implements CommandLineRunner {
                 "The campus stage for public rhetoric, debate, and intellectual discourse.",
                 "VPMCOE Literary Club sharpens student communication through Model United Nations, debates, poetry slams, and creative writing.",
                 null,
-                "Prof. M. S. Pawar",
+                "Faculty Coordinator",
                 "Seminar Hall 2, Main Building",
                 "Every Thursday at 4:00 PM",
-                "literary@vpmcoe.ac.in",
+                "literary-club@example.invalid",
                 "linear-gradient(135deg, #f7971e 0%, #ffd200 100%)"
         );
         clubRepository.save(literaryClub);

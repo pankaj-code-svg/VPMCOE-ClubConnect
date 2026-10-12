@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: clubconnect-demo
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /login
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: demo
